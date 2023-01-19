@@ -117,9 +117,13 @@ const compileDates = () => {
  */
 const buildSelenium = (headless) => {
     logging.info(NAMESPACE, 'buildSelenium: START');
-    selenium.driver = new webdriver.Builder().forBrowser('chrome').build();
+    options = new chrome.Options();
+    options.addArguments('headless');
+    options.addArguments('disable-gpu');
+    selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
+    
 };
 
 /**
