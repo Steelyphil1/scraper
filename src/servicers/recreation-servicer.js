@@ -35,5 +35,6 @@ const processScrape = async (event, context, callback) => {
 
     utilities.endSelenium();
 }
+console.log('test pipeline');
 
 module.exports = { handler };
