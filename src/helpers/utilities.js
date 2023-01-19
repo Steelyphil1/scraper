@@ -97,7 +97,9 @@ const compileDates = () => {
     let dateMax = new Date(data.dateMax);
     let timeDiff = dateMax.getTime() - dateMin.getTime();
     data.dateDiff = timeDiff / (1000 * 3600 * 24);
-
+    console.log('dateMin: ' , dateMin.toLocaleDateString('en-us', {year:'numeric', month:'short', day:'numeric'}));
+    console.log('dateMax: ' , dateMax.toLocaleDateString('en-us', {year:'numeric', month:'short', day:'numeric'}));
+    console.log('dateDiff: ' , data.dateDiff);
     data.dates.push(dateMin.toLocaleDateString('en-us', {year:'numeric', month:'short', day:'numeric'}));
     for(let i = 1; i <= data.dateDiff; i++){
         let tempDate = dateMin;
@@ -105,6 +107,7 @@ const compileDates = () => {
         data.dates.push(tempDate.toLocaleDateString('en-us', {year:'numeric', month:'short', day:'numeric'}));
         data.dateFoundMap[tempDate.toLocaleDateString('en-us', {year: 'numeric', month: 'short', day: 'numeric'})] = false;
     }
+    console.log('dates after: ' , data.dates);
 }
 
 /**
