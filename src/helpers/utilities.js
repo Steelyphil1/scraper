@@ -57,6 +57,7 @@ const validateEvent = (event) => {
         throw 'Please input a valid month/day combination';
     }
     if(data.dates.length > 7){
+        console.log('dates: ' , data.dates);
         throw 'Range cannot be over 7 days';
     }
     // if(((constants.months[event.monthMax] - constants.months[event.monthMin]) > 1) || ((constants.months[event.monthMax] - constants.months[event.monthMin]) < 0)){
