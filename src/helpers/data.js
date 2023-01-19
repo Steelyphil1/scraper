@@ -1,0 +1,21 @@
+let website;
+let campground;
+let campsite;
+let type;
+let yearMin;
+let monthMin;
+let dayMin;
+let yearMax;
+let monthMax;
+let dayMax;
+let range;
+let dateMin;
+let dateMax;
+let dateDiff;
+let dates = [];
+let dateFoundMap = {};
+let found = false;
+let sourceEmail;
+let targetEmails = [];
+
+module.exports = { campground, campsite, dates, dateDiff, dateFoundMap, dateMin, dateMax, dayMax, dayMin, found, monthMax, monthMin, range, sourceEmail, targetEmails, type, website, yearMax, yearMin };
