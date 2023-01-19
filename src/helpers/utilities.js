@@ -93,6 +93,7 @@ const digestEvent = (event) => {
  * Function to compile the Dates structure
  */
 const compileDates = () => {
+    logging.info(NAMESPACE, 'compileDates: START');
     let dateMin = new Date(data.dateMin);
     let dateMax = new Date(data.dateMax);
     let timeDiff = dateMax.getTime() - dateMin.getTime();
@@ -115,6 +116,7 @@ const compileDates = () => {
  * @param {Boolean} headless Boolean value for Headless or not
  */
 const buildSelenium = (headless) => {
+    logging.info(NAMESPACE, 'buildSelenium: START');
     selenium.driver = new webdriver.Builder().forBrowser('chrome').build();
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
@@ -124,6 +126,7 @@ const buildSelenium = (headless) => {
  * Function that ends the Selenium Driver
  */
 const endSelenium = () => {
+    logging.info(NAMESPACE, 'endSelenium: START');
     selenium.driver.quit();
 }
 
@@ -174,6 +177,7 @@ const navigateToProperDay = async (driver) => {
  * @param {Object} driver Selenium Driver Object
  */
 const recGovFiveDays = async (driver) => {
+    logging.info(NAMESPACE, 'recGovFiveDays: START');
     await driver.findElement(selenium.by.xpath('//button[@aria-label="Go Forward 5 Days"]')).click();
 }
 
@@ -183,6 +187,7 @@ const recGovFiveDays = async (driver) => {
  * @returns Map of the Current Months being displayed on on Recreation.gov
  */
 const getRecreationGovMonths = async (driver) => {
+    logging.info(NAMESPACE, 'getRecreationGovMonths: START');
     let monthElements = await driver.findElements(selenium.by.xpath('//tr[@class="rec-table-months-row"]//th//div//span'));
     if(monthElements !== undefined){
         const months = {};
@@ -204,6 +209,7 @@ const getRecreationGovMonths = async (driver) => {
  * @returns Map of the Current Dates being displayed on on Recreation.gov
  */
 const getRecreationGovDays = async (driver) => {
+    logging.info(NAMESPACE, 'getRecreationGovDays: START');
     let dateElements = await driver.findElements(selenium.by.xpath('//span[@class="date"]'));
     if(dateElements !== undefined){
         const dates = {};
