@@ -32,7 +32,7 @@ const processScrape = async (event, context, callback) => {
     if(data.found){
         await utilities.emailSites();
     }
-    console.log('hello lambda');
+    console.log('hello lambdaadf');
     utilities.endSelenium();
 }
 
