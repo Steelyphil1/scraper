@@ -1,0 +1,15 @@
+{
+    "name": "scraper",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "build": "rm -rf build/ && prettier --write src/ && tsc"
+    },
+    "dependencies": {
+        "aws-lambda": "^1.0.7"
+    },
+    "devDependencies": {},
+    "resolutions": {
+        "node-sass": "https://registry.npmjs.org/node-sass/-/node-sass-7.0.0.tgz"
+    }
+}
