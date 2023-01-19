@@ -35,6 +35,6 @@ const processScrape = async (event, context, callback) => {
 
     utilities.endSelenium();
 }
-console.log('Hello!');
+console.log('Hello Lambda!');
 
 module.exports = { handler };
