@@ -1,15 +1,25 @@
 {
-    "name": "scraper",
-    "version": "0.0.1",
-    "private": true,
-    "scripts": {
-        "build": "rm -rf build/ && prettier --write src/ && tsc"
-    },
-    "dependencies": {
-        "aws-lambda": "^1.0.7"
-    },
-    "devDependencies": {},
-    "resolutions": {
-        "node-sass": "https://registry.npmjs.org/node-sass/-/node-sass-7.0.0.tgz"
-    }
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.1297.0",
+    "chromedriver": "^109.0.0",
+    "selenium-webdriver": "^4.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Steelyphil1/scraper.git"
+  },
+  "author": "Phillip Bay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Steelyphil1/scraper/issues"
+  },
+  "homepage": "https://github.com/Steelyphil1/scraper#readme"
 }
