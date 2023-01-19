@@ -6,6 +6,7 @@
   "dependencies": {
     "aws-sdk": "^2.1297.0",
     "chromedriver": "^109.0.0",
+    "dotenv": "^16.0.3",
     "selenium-webdriver": "^4.7.1"
   },
   "devDependencies": {},
