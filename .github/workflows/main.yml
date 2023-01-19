@@ -7,7 +7,7 @@ jobs:
     name: build and deploy lambda
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
