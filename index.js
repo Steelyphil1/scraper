@@ -17,45 +17,47 @@ const executeRequest = (event, context, callback) => {
     }
 }
 
-/*
-//ReserveCa
-this.handler({ 
-    website: 'reserveca', 
-    campground: 'pfeiffer-main', 
-    campsite: null, 
-    type: 'scrape', 
-    yearMin: '2023', 
-    monthMin: 'Feb', 
-    dayMin: '05', 
-    yearMax: '2023', 
-    monthMax: 'Feb', 
-    dayMax: '07', 
-    range: false,
-    sourceEmail: 'yosemitescraper420@gmail.com',
-    targetEmails: ['phillip.bay@gmail.com']
-});
-*/
 
-/*
+//ReserveCa
+// this.handler({ 
+//     firstName: 'Phillip',
+//     lastName: 'Bay',
+//     website: 'reserveca', 
+//     campground: 'pfeiffer-main', 
+//     campsite: null, 
+//     type: 'scrape', 
+//     yearMin: '2023', 
+//     monthMin: 'Feb', 
+//     dayMin: '12', 
+//     yearMax: '2023', 
+//     monthMax: 'Feb', 
+//     dayMax: '15', 
+//     range: false,
+//     sourceEmail: 'yosemitescraper420@gmail.com',
+//     targetEmails: ['phillip.bay@gmail.com']
+// });
+
+
+
 //Recreation.Gov
-this.handler({ 
-    firstName: 'Phillip',                           //String
-    lastName: 'Bay',                                //String
-    website: 'recreation.gov',                      //String
-    campground: 'upper-pines',                      //String
-    campsite: 33,                                   //Number
-    type: 'scrape',                                 //String
-    yearMin: '2023',                                //String
-    monthMin: 'Feb',                                //String
-    dayMin: '6',                                    //String
-    yearMax: '2023',                                //String
-    monthMax: 'Feb',                                //String
-    dayMax: '7',                                    //String
-    range: true,                                    //String
-    sourceEmail: 'yosemitescraper420@gmail.com',    //String
-    targetEmails: ['phillip.bay@gmail.com']         //String
-});
-*/
+// this.handler({ 
+//     firstName: 'Phillip',                           //String
+//     lastName: 'Bay',                                //String
+//     website: 'recreation.gov',                      //String
+//     campground: 'upper-pines',                      //String
+//     campsite: 33,                                   //Number
+//     type: 'scrape',                                 //String
+//     yearMin: '2023',                                //String
+//     monthMin: 'Feb',                                //String
+//     dayMin: '6',                                    //String
+//     yearMax: '2023',                                //String
+//     monthMax: 'Feb',                                //String
+//     dayMax: '7',                                    //String
+//     range: true,                                    //String
+//     sourceEmail: 'yosemitescraper420@gmail.com',    //String
+//     targetEmails: ['phillip.bay@gmail.com']         //String
+// });
+
 
 //ReserveCa Days: '01'-'31'
 //Recreation Days: '1'-'31'

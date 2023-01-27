@@ -98,6 +98,7 @@ const months = {
     }
 };
 
-const emailString = "Hey {0},\nThe following Campesite(s) have been found at {1}:\n{2}\n\nThanks for using the California Campsite Scraper.\n\nPhillip Bay";
+const emailString = 'Hey {0},\nThe following Campesite(s) have been found at {1} -- {2}\n{3}\n\nThanks for using the California Campsite Scraper.\n\nPhillip Bay';
+const emailStringHTML = '<html><head><style></style></head><body><p>Hey {0},</p><br><p>The following Campsite(s) have been found at <a target="_blank" href="{1}">{2}</a></p><br><p>{3}</p> <br><p>Login, book your sites, and let me know which you were able to reserve.</p><br><p>Thanks for using the California Campsite Scraper!</p><br><br><p>Phillip Bay</p><br><p>phillip.bay@gmail.com</p></body></html>';
 
-module.exports = { campsites, months, emailString };
+module.exports = { campsites, months, emailString, emailStringHTML };

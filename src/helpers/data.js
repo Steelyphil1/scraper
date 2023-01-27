@@ -20,5 +20,7 @@ let found = false;
 let sourceEmail;
 let targetEmails = [];
 let confirmedDates = [];
+let currentDates = {};
+let currentMonths = {};
 
-module.exports = { campground, campsite, confirmedDates, dates, dateDiff, dateFoundMap, dateMin, dateMax, dayMax, dayMin, firstName, found, lastName, monthMax, monthMin, range, sourceEmail, targetEmails, type, website, yearMax, yearMin };
+module.exports = { campground, campsite, confirmedDates, currentDates, currentMonths, dates, dateDiff, dateFoundMap, dateMin, dateMax, dayMax, dayMin, firstName, found, lastName, monthMax, monthMin, range, sourceEmail, targetEmails, type, website, yearMax, yearMin };

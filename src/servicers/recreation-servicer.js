@@ -100,17 +100,11 @@ const findSiteRecreation = async (driver) => {
     if(siteElements && siteElements.length > 0){
         for(let siteElement of siteElements){
             let ariaLabel = await siteElement.getAttribute('aria-label');
-            console.log(ariaLabel.substring(0,12));
-            console.log(ariaLabel.substring(18,ariaLabel.length-1));
             if(data.dates.some(date => ariaLabel.substring(0,12).includes(date))){
-                console.log('Date in String');
                 if(data.campsite){
-                    console.log('Campsite');
                     if(ariaLabel.substring(18, ariaLabel.length-1).includes(data.campsite)){
-                        console.log('Campsite In String');
                         logging.info(NAMESPACE, 'Found Campsite -- ' + ariaLabel.substring(0, 23));
                         if(data.range){
-                            console.log("Range found");
                             for(let date of Object.keys(data.dateFoundMap)){
                                 if(ariaLabel.includes(date)){
                                     data.dateFoundMap[date] = true;
@@ -118,7 +112,6 @@ const findSiteRecreation = async (driver) => {
                                 }
                             }
                         } else {
-                            console.log('no range');
                             data.found = true;
                             data.confirmedDates.push(ariaLabel);
                         }
@@ -126,7 +119,6 @@ const findSiteRecreation = async (driver) => {
                         console.log('Campsite Not in String');
                     }
                 } else {
-                    console.log('no campsite');
                     logging.info(NAMESPACE, 'Found Campsite -- ' + ariaLabel.substring(0, 23));
                     if(data.range){
                         for(let date of Object.keys(data.dateFoundMap)){

@@ -10,7 +10,7 @@ const processScrape = async (event, context, callback) => {
     logging.info(NAMESPACE, 'processScrape: START');
     utilities.digestEvent(event);
     utilities.validateEvent(event);
-    utilities.buildSelenium(false);
+    utilities.buildSelenium(true);
     driver = selenium.driver;
     await driver.get(constants.campsites[data.website][data.campground].url);
     await utilities.navigateToProperDate(driver);

@@ -141,14 +141,16 @@ const compileDates = () => {
  * Functionn that builds the Selenium Driver and fills the objects in selenium.js
  * @param {Boolean} headless Boolean value for Headless or not
  */
-const buildSelenium = (headless) => {
+const buildSelenium = async (headless) => {
     logging.info(NAMESPACE, 'buildSelenium: START');
     options = new chrome.Options();
     if(headless){
         options.addArguments('headless');
         options.addArguments('disable-gpu');
+        options.addArguments('window-size=1920x1080');
     }
     selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
+    // await selenium.driver.manage().window().maximize();
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
     
@@ -173,7 +175,7 @@ const navigateToProperDate = async (driver) => {
         await recreationServicer.navigateToProperDay(driver);
     } else if(data.website === 'reserveca'){
         await reservecaServicer.navigateToProperMonth(driver);
-        await reservecaServicer.navigateToProperDay(driver);
+        await reservecaServicer.navigateToProperDay(driver, data.dayMin);
     }
 }
 
@@ -186,7 +188,8 @@ const findSite = async (driver) => {
     if(data.website === 'recreation.gov'){
         await recreationServicer.findSiteRecreation(driver);
     } else if(data.website === 'reserveca'){
-        await reservecaServicer.findSiteReserveCa(driver);
+        let day = new Date(data.dateMin);
+        await reservecaServicer.findSiteReserveCa(driver, day.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
     }
 }
 
@@ -204,7 +207,8 @@ const emailSites = async () => {
         },
         Message: {
             Body: {
-                Text: { Data: buildEmail()}
+                Text: { Data: buildEmail(constants.emailString)},
+                Html: { Data: buildEmail(constants.emailStringHTML)}
             },
             Subject: {
                 Data: "Campsite(s) Have Been Found"
@@ -220,10 +224,9 @@ const emailSites = async () => {
  * Function to build the email from the various strings
  * @returns Resulting Email Body String
  */
-const buildEmail = () => {
+const buildEmail = (emailString) => {
     logging.info(NAMESPACE, 'buildEmail: ' , data.confirmedDates);
-    let emailString = String.format(constants.emailString, data.firstName, data.campground, convertListToString(data.confirmedDates));
-    return emailString;
+    return String.format(emailString, data.firstName, data.campground, constants.campsites[data.website][data.campground].url, convertListToString(data.confirmedDates));
 }
 
 /**
