@@ -1,5 +1,6 @@
 const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
+// const chromium = require("@sparticuz/chrome-aws-lambda");
 const chromedriver = require('chromedriver');
 const selenium = require('./selenium');
 const logging = require('./logging');
@@ -247,4 +248,14 @@ const convertListToString = (campsites) => {
     }
 };
 
-module.exports = { buildSelenium, convertListToString, digestEvent, emailSites, endSelenium, findSite, navigateToProperDate, validateEvent };
+const clearData = () => {
+    data.dates = [];
+    data.dateFoundMap = {};
+    data.found = false;
+    data.targetEmails = [];
+    data.confirmedDates = [];
+    data.currentDates = {};
+    data.currentMonths = {};
+}
+
+module.exports = { buildSelenium, clearData, convertListToString, digestEvent, emailSites, endSelenium, findSite, navigateToProperDate, validateEvent };

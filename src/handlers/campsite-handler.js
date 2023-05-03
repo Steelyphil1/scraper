@@ -8,6 +8,7 @@ const NAMESPACE = 'campsite-handler';
 
 const processScrape = async (event, context, callback) => {
     logging.info(NAMESPACE, 'processScrape: START');
+    utilities.clearData();
     utilities.digestEvent(event);
     utilities.validateEvent(event);
     utilities.buildSelenium(true);
@@ -22,6 +23,10 @@ const processScrape = async (event, context, callback) => {
         logging.info(NAMESPACE, 'processScrape: No Sites Found -- Not Emailing');
     }
     utilities.endSelenium();
+    if(event.environment === 'local'){
+        await new Promise(r => setTimeout(r, 300000));
+        processScrape(event);
+    }
 }
 
 module.exports = { processScrape }
