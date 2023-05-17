@@ -6,8 +6,8 @@ const constants = require('../helpers/constants');
 
 const NAMESPACE = 'campsite-handler';
 
-const processScrape = async (event, context, callback) => {
-    logging.info(NAMESPACE, 'processScrape: START');
+const processScrape = async (event, count, context, callback) => {
+    logging.info(NAMESPACE, 'processScrape: START', event.campground);
     utilities.clearData();
     utilities.digestEvent(event);
     utilities.validateEvent(event);
@@ -23,8 +23,23 @@ const processScrape = async (event, context, callback) => {
         logging.info(NAMESPACE, 'processScrape: No Sites Found -- Not Emailing');
     }
     utilities.endSelenium();
-    if(event.environment === 'local'){
-        await new Promise(r => setTimeout(r, 300000));
+    if(event.environment === 'local' && event.camparea === 'yosemite'){
+        await new Promise(r => setTimeout(r, 40000));
+        if(count % 3 === 0){
+            console.log('calling with upper-pines');
+            const newEvent = {...event, campground: 'upper-pines'};
+            processScrape(newEvent, count+1);
+        } else if(count % 3 === 1){
+            console.log('calling with lower-pines');
+            const newEvent = {...event, campground: 'lower-pines'};
+            processScrape(newEvent, count+1);
+        } else {
+            console.log('calling with north-pines');
+            const newEvent = {...event, campground: 'north-pines'};
+            processScrape(newEvent, count+1);
+        }
+    } else if(event.environment === 'local'){
+        await new Promise(r => setTimeout(r, 40000));
         processScrape(event);
     }
 }

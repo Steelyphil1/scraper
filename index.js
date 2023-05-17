@@ -11,7 +11,7 @@ exports.handler = (event, context, callback) => {
 
 const executeRequest = (event, context, callback) => {
     if (event !== undefined) {
-        campsiteHandler.processScrape(event, context, callback);
+        campsiteHandler.processScrape(event, 0, context, callback);
     } else {
         logging.error(NAMESPACE, "executeRequest: Event Undefined");
     }
@@ -41,7 +41,8 @@ this.handler({
     firstName: "Phillip", //String
     lastName: "Bay", //String
     website: "recreation.gov", //String
-    campground: "upper-pines", //String
+    camparea: "yosemite", //String
+    campground: "north-pines", //String
     campsite: null, //Number
     type: "scrape", //String
     yearMin: "2023", //String

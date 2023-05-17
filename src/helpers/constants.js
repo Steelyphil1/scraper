@@ -16,7 +16,7 @@ const campsites = {
             website: "recreation.gov",
             location: "yosemite",
             campground: "north-pines",
-            url: "https://www.recreation.gov/camping/campgrounds/23244"
+            url: "https://www.recreation.gov/camping/campgrounds/232449"
         },
         "wolf-creek": {
             website: "recreation.gov",

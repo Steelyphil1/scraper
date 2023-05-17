@@ -54,7 +54,7 @@ const recGovFiveDays = async (driver) => {
 const getRecreationGovMonths = async (driver) => {
     logging.info(NAMESPACE, 'getRecreationGovMonths: START');
     let monthElements = await driver.findElements(selenium.by.xpath('//tr[@class="rec-table-months-row"]//th//div//span'));
-    if(monthElements !== undefined){
+    if(monthElements !== undefined && monthElements.length > 0){
         const months = {};
         for(let monthElement of monthElements){
             if(monthElement !== undefined){
