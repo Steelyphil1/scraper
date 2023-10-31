@@ -38,19 +38,19 @@ const executeRequest = (event, context, callback) => {
 
 //Recreation.Gov
 // this.handler({
-//     firstName: "Phillip",                       //String
-//     lastName: "Bay",                            //String
+//     firstName: "Phillip",                       //String    
+//     lastName: "Bay",                            //String    
 //     website: "recreation.gov",                  //String    "recreation.gov" or "reserveca"
 //     camparea: "yosemite",                       //String    "yosemite" or null
 //     campground: "upper-pines",                  //String    "upper-pines"
-//     campsite: null,                             //Number  
+//     campsite: null,                             //Number    42
 //     type: "scrape",                             //String    "scrape"
-//     yearMin: "2023",                            //String  
-//     monthMin: "Jun",                            //String
-//     dayMin: "18",                               //String
-//     yearMax: "2023",                            //String
-//     monthMax: "Jun",                            //String
-//     dayMax: "20",                               //String
+//     yearMin: "2023",                            //String    "2023"
+//     monthMin: "Nov",                            //String    "Oct"
+//     dayMin: "5",                                //String    "6" or "24"
+//     yearMax: "2023",                            //String    "2023"
+//     monthMax: "Nov",                            //String    "Oct"
+//     dayMax: "5",                                //String    "7" or "14"
 //     range: false,                               //Boolean   Enforce a specific range
 //     sourceEmail: "yosemitescraper420@gmail.com",//String
 //     targetEmails: ["phillip.bay@gmail.com"],    //Array of String Emails

@@ -202,14 +202,14 @@ const emailSites = async () => {
     logging.info(NAMESPACE, 'emailSites: START');
     aws.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, region: process.env.AWS_REGION });
     const ses = new aws.SES({ region: process.env.AWS_REGION });
-    let params = {
+    const params = {
         Destination: {
             ToAddresses: data.targetEmails
         },
         Message: {
             Body: {
-                Text: { Data: buildEmail(constants.emailString)},
-                Html: { Data: buildEmail(constants.emailStringHTML)}
+                Text: { Data: buildEmail("string")},
+                Html: { Data: buildEmail("html")}
             },
             Subject: {
                 Data: "Campsite(s) Have Been Found"
@@ -222,12 +222,17 @@ const emailSites = async () => {
 }
 
 /**
- * Function to build the email from the various strings
- * @returns Resulting Email Body String
+ * Function to build the email body from the various inputs
+ * @param {String} type What type of email are we building -- string or html
+ * @returns 
  */
-const buildEmail = (emailString) => {
-    logging.info(NAMESPACE, 'buildEmail: ' , data.confirmedDates);
-    return String.format(emailString, data.firstName, data.campground, constants.campsites[data.website][data.campground].url, convertListToString(data.confirmedDates));
+const buildEmail = (type) => {
+    logging.info(NAMESPACE, 'buildEmail: ' , data.confirmedDates , type);
+    const confirmedDatesString = data.confirmedDates.reduce((acc, currentDate)=> {
+        acc += currentDate + "<br>";
+        return acc;
+    }, "");
+    return type === 'html' ? String.format(constants.emailStringHTML, data.firstName, constants.campsites[data.website][data.campground].url, data.campground, confirmedDatesString) : String.format(constants.emailGreeting, data.firstName, constants.campsites[data.website][data.campground].url, data.campground) + confirmedDatesString + constants.emailOutro;
 }
 
 /**
