@@ -11,9 +11,10 @@ const NAMESPACE = 'servicers/recreation-servicer';
  */
 const navigateToProperMonth = async (driver) => {
     logging.info(NAMESPACE, 'navigateToProperMonth: START');
-    let months = await getRecreationGovMonths(driver);
+    const months = await getRecreationGovMonths(driver);
     if(constants.months[data.monthMin].name in months && constants.months[data.monthMax].name in months){
         logging.info(NAMESPACE, 'Navigated to the correct Months');
+        return 0;
     } else {
         logging.info(NAMESPACE, "Not In the correct months, forwarding 5 days");
         await recGovFiveDays(driver);
@@ -30,6 +31,7 @@ const navigateToProperDay = async (driver) => {
     let dates = await getRecreationGovDays(driver);
     if(data.dayMin in dates && data.dayMax in dates){
         logging.info(NAMESPACE, 'Navigated to the correct Dates');
+        return 0;
     } else {
         logging.info(NAMESPACE, "Correct Dates not displayed, forwarding 5 days");
         await recGovFiveDays(driver);

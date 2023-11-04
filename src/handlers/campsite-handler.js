@@ -14,13 +14,17 @@ const processScrape = async (event, count, context, callback) => {
     utilities.buildSelenium(true);
     driver = selenium.driver;
     await driver.get(constants.campsites[data.website][data.campground].url);
-    await utilities.navigateToProperDate(driver);
-    await utilities.findSite(driver);
-    if(data.found){
-        logging.info(NAMESPACE, 'processScrape: Campsite(s) Found -- Emailing');
-        await utilities.emailSites();
+    const navigateReturn = await utilities.navigateToProperDate(driver);
+    if(navigateReturn === 0){
+        await utilities.findSite(driver);
+        if(data.found){
+            logging.info(NAMESPACE, 'processScrape: Campsite(s) Found -- Emailing');
+            await utilities.emailSites();
+        } else {
+            logging.info(NAMESPACE, 'processScrape: No Sites Found -- Not Emailing');
+        }
     } else {
-        logging.info(NAMESPACE, 'processScrape: No Sites Found -- Not Emailing');
+        logging.info(NAMESPACE, 'processScrape: Error Occured -- Skipping Process');
     }
     utilities.endSelenium();
     if(event.environment === 'local' && event.camparea === 'yosemite'){

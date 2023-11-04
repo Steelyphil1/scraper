@@ -36,6 +36,7 @@ const navigateToProperMonth = async (driver) => {
     if(constants.months[data.monthMin].nameReserve in months && constants.months[data.monthMax].nameReserve in months){
         logging.info(NAMESPACE, 'navigateToProperMonth: Navigated to the correct Months');
         data.currentMonths = months;
+        return 0;
     } else {
         logging.info(NAMESPACE, "navigateToProperMonth: Not In the correct months, forwarding 5 days");
         await reserveCaNextWeek(driver);
@@ -61,6 +62,7 @@ const navigateToProperDay = async (driver, day) => {
         } else {
             logging.info(NAMESPACE, 'navigateToProperDay: Navigated to the correct Dates');
             data.currentDates = dates;
+            return 0;
         }
     } else {
         logging.info(NAMESPACE, "navigateToProperDay: Correct Dates not displayed, forwarding 5 days");

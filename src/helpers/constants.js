@@ -18,6 +18,12 @@ const campsites = {
             campground: "north-pines",
             url: "https://www.recreation.gov/camping/campgrounds/232449"
         },
+        "pinnacles": {
+            website: "recreation.gov",
+            location: "pinnacles",
+            campground: "main",
+            url: "https://www.recreation.gov/camping/campgrounds/234015"
+        },
         "wolf-creek": {
             website: "recreation.gov",
             location: "union valley resevoir",

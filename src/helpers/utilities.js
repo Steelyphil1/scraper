@@ -172,11 +172,19 @@ const endSelenium = () => {
 const navigateToProperDate = async (driver) => {
     logging.info(NAMESPACE, 'navigateToProperDate: START');
     if(data.website === 'recreation.gov'){
-        await recreationServicer.navigateToProperMonth(driver);
-        await recreationServicer.navigateToProperDay(driver);
+        const monthReturn = await recreationServicer.navigateToProperMonth(driver);
+        if(monthReturn === 0) {
+            return await recreationServicer.navigateToProperDay(driver);
+        } else {
+            return 1;
+        }
     } else if(data.website === 'reserveca'){
-        await reservecaServicer.navigateToProperMonth(driver);
-        await reservecaServicer.navigateToProperDay(driver, data.dayMin);
+        const monthReturn = await reservecaServicer.navigateToProperMonth(driver);
+        if(monthReturn === 0){
+            return await reservecaServicer.navigateToProperDay(driver, data.dayMin);
+        } else {
+            return 1;
+        }
     }
 }
 
