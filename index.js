@@ -45,11 +45,11 @@ this.handler({
     campground: "upper-pines",                  //String    "upper-pines"
     campsite: null,                             //Number    42
     type: "scrape",                             //String    "scrape"
-    yearMin: "2023",                            //String    "2023"
-    monthMin: "Nov",                            //String    "Oct"
-    dayMin: "10",                                //String    "6" or "24"
-    yearMax: "2023",                            //String    "2023"
-    monthMax: "Nov",                            //String    "Oct"
+    yearMin: "2024",                            //String    "2023"
+    monthMin: "Feb",                            //String    "Oct"
+    dayMin: "12",                                //String    "6" or "24"
+    yearMax: "2024",                            //String    "2023"
+    monthMax: "Feb",                            //String    "Oct"
     dayMax: "12",                                //String    "7" or "14"
     range: false,                               //Boolean   Enforce a specific range
     sourceEmail: "yosemitescraper420@gmail.com",//String

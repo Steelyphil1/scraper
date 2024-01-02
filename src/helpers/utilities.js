@@ -173,17 +173,18 @@ const navigateToProperDate = async (driver) => {
     logging.info(NAMESPACE, 'navigateToProperDate: START');
     if(data.website === 'recreation.gov'){
         const monthReturn = await recreationServicer.navigateToProperMonth(driver);
+        logging.info(NAMESPACE, "month returned with: ", monthReturn);
         if(monthReturn === 0) {
             return await recreationServicer.navigateToProperDay(driver);
         } else {
-            return 1;
+            return monthReturn;
         }
     } else if(data.website === 'reserveca'){
         const monthReturn = await reservecaServicer.navigateToProperMonth(driver);
         if(monthReturn === 0){
             return await reservecaServicer.navigateToProperDay(driver, data.dayMin);
         } else {
-            return 1;
+            return monthReturn;
         }
     }
 }
