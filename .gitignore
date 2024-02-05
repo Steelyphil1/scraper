@@ -1,6 +1,5 @@
 logs/*
 !.gitkeep
-node_modules/
 api/db/unanswered.json
 tmp
 .DS_Store
