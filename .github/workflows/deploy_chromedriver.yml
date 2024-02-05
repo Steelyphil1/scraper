@@ -31,6 +31,8 @@ jobs:
         run: |
           # Create a ZIP file containing chromedriver
           zip -qq $release_id chromedriver
+          # Inspect contents
+          unzip -l $release_id
 
           echo "release_id $release_id"
           echo "release_layer $release_layer"
