@@ -40,10 +40,16 @@ jobs:
           # Inspect contents
           unzip -l $release_id
 
+          if [ -e "./chromedriver.zip" ]; then
+            echo "File 'chromedriver.zip' exists."
+          else
+            echo "File 'chromedriver.zip' not found."
+          fi
+
           echo "release_id $release_id"
           echo "release_layer $release_layer"
           echo "release_bucket_uri $release_bucket_uri"
 
           # Copy the file to S3 and install it in Lambda Layer
-          aws s3 cp ./chromedriver.zip $release_bucket_uri
+          aws s3 cp ./chromedriver.zip s3://camp-lite-dev/chromedriver/chromedriver.zip
           aws lambda publish-layer-version --layer-name $release_layer
