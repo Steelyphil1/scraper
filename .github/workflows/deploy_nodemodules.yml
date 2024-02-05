@@ -5,7 +5,7 @@ on: # On push to master, if node_modules, package.json, or package-lock.json has
     branches:
       - master
     paths:
-      - 'node_modules'
+      - 'node_modules/**'
       - 'package.json'
       - 'package-lock.json'
 
