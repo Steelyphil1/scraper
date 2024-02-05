@@ -22,6 +22,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Create ZIP file
+              run: |
+                # Create a ZIP file containing chromedriver
+                zip -qq chromedriver.zip chromedriver
+
+                # Inspect contents
+                unzip -l ./chromedriver.zip
+
+                if [ -e "./chromedriver.zip" ]; then
+                  echo "File 'chromedriver.zip' exists."
+                else
+                  echo "File 'chromedriver.zip' not found."
+                  exit 1
+                fi
+
       - name: Debugging
         run: |
           ls -al
@@ -29,27 +44,7 @@ jobs:
           aws --version
 
       - name: Package Lambda Layer
-        env: 
-          release_bucket: camp-lite-dev
-          release_bucket_uri: s3://camp-lite-dev/chromedriver/
-          release_id: chromedriver.zip
-          release_layer: chromedriver
         run: |
-          # Create a ZIP file containing chromedriver
-          zip -qq chromedriver.zip chromedriver
-          # Inspect contents
-          unzip -l $release_id
-
-          if [ -e "./chromedriver.zip" ]; then
-            echo "File 'chromedriver.zip' exists."
-          else
-            echo "File 'chromedriver.zip' not found."
-          fi
-
-          echo "release_id $release_id"
-          echo "release_layer $release_layer"
-          echo "release_bucket_uri $release_bucket_uri"
-
           # Copy the file to S3 and install it in Lambda Layer
           aws s3 cp ./chromedriver.zip s3://camp-lite-dev/chromedriver/chromedriver.zip
           aws lambda publish-layer-version --layer-name $release_layer
