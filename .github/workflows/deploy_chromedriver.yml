@@ -40,8 +40,18 @@ jobs:
           pwd
           aws --version
 
+      - name: Debug AWS Lambda Layer
+        run: |
+          aws s3 ls s3://camp-lite-dev/chromedriver/
+          aws lambda list-layers
+
       - name: Package Lambda Layer
         run: |
           # Copy the file to S3 and install it in Lambda Layer
           aws s3 cp ./chromedriver.zip s3://camp-lite-dev/chromedriver/chromedriver.zip
-          # aws lambda publish-layer-version --layer-name chromedriver
+          # aws lambda publish-layer-version --layer-name chromedriver --content S3Bucket=camp-lite-dev,S3Key=chromedriver/chromedriver.zip
+
+      - name: Debug AWS Lambda Layer2
+        run: |
+          aws s3 ls s3://camp-lite-dev/chromedriver/
+          aws lambda list-layers
