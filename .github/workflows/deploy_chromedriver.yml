@@ -44,4 +44,4 @@ jobs:
         run: |
           # Copy the file to S3 and install it in Lambda Layer
           aws s3 cp ./chromedriver.zip s3://camp-lite-dev/chromedriver/chromedriver.zip
-          aws lambda publish-layer-version --layer-name chromedriver
+          # aws lambda publish-layer-version --layer-name chromedriver
