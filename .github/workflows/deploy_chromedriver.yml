@@ -26,7 +26,7 @@ jobs:
         env: 
           release_bucket: camp-lite-dev
           release_bucket_uri: s3://camp-lite-dev/chromedriver/
-          release_id: ${{ format('chromedriver.zip', github.head_ref )}}
+          release_id: chromedriver.zip
           release_layer: chromedriver
         run: |
           # Create a ZIP file containing chromedriver
