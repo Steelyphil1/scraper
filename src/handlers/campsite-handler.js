@@ -3,6 +3,7 @@ const logging = require('../helpers/logging');
 const data = require('../helpers/data');
 const selenium = require('../helpers/selenium');
 const constants = require('../helpers/constants');
+const exec = require("child_process").exec;
 
 const NAMESPACE = 'campsite-handler';
 

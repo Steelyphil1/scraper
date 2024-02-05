@@ -1,7 +1,7 @@
 const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-// const chromium = require("@sparticuz/chrome-aws-lambda");
-const chromedriver = require('chromedriver');
+//const chromeaws = require('chrome-aws-lambda');
+const { exec } = require('child_process');
 const selenium = require('./selenium');
 const logging = require('./logging');
 const constants = require('./constants');
@@ -104,6 +104,7 @@ const digestEvent = (event) => {
     data.dateMax = data.monthMax + ' ' + data.dayMax + ', ' + data.yearMax;
     data.sourceEmail = event.sourceEmail;
     data.targetEmails = event.targetEmails;
+    data.environment = event.environment;
     compileDates();
 }
 
@@ -144,18 +145,68 @@ const compileDates = () => {
  */
 const buildSelenium = async (headless) => {
     logging.info(NAMESPACE, 'buildSelenium: START');
-    options = new chrome.Options();
+    const options = new chrome.Options();
     if(headless){
         options.addArguments('headless');
         options.addArguments('disable-gpu');
         options.addArguments('window-size=1920x1080');
+    } else {
+        // await selenium.driver.manage().window().maximize();
     }
-    selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
-    // await selenium.driver.manage().window().maximize();
+
+    console.log('lambda?' , data.environment === 'lambda');
+    if(data.environment === 'lambda'){
+        // promisify exec
+        try{
+            const res = await promisfyExec('ls -R ~/opt');
+            console.log('res: ' , res);
+        } catch (err) {
+            console.log('errrrrrr: ' , err);
+        }
+       
+        // const res = await execShellCommand('ls -R var/task');
+        // console.log('res: ' , res);
+        // const resOpt = await execShellCommand('ls -R /opt');
+        // console.log('resOpt: ', resOpt);
+
+        // browser = await chromeaws.puppeteer.launch({
+        //     args: chromium.args,
+        //     defaultViewport: chromium.defaultViewport,
+        //     executablePath: await chromium.executablePath,
+        //     headless: chromium.headless
+        //   });
+        // options.setChromeBinaryPath('/opt/chromedriver/chromedriver');
+        // process.env.CHROME_PATH = '/opt/chromedriver/chromedriver';
+        //chrome.setDefaultService(new chrome.ServiceBuilder(chrome.BinaryPath.getChromeDriverExecutablePath()).build());
+        // selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
+    } else {
+        selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
+    }
+    
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
-    
 };
+
+const promisfyExec = async (cmd) => {
+    return new Promise((resolve, reject) => {
+        console.log('here with ' , cmd);
+        exec(cmd, (err, stdout, stderr) => {
+            if(err){
+                console.log('err: ', err);
+                reject(err);
+            }
+            if(stderr){
+                console.log('stderr: ' , stderr);
+                reject(err);
+            }
+            if(stdout){
+                console.log('stdout: ' , stdout);
+                resolve(stdout);
+            }
+            console.log('here with nothing I guess');
+        });
+    })
+}
 
 /**
  * Function that ends the Selenium Driver
