@@ -9,7 +9,7 @@ const data = require('./data');
 const recreationServicer = require('../servicers/recreation-servicer');
 const reservecaServicer = require('../servicers/reserveca-servicer');
 const NAMESPACE = 'utilities';
-const aws = require('aws-sdk');
+const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 
 /**
  * Overwrite to create a String format method
@@ -152,7 +152,7 @@ const buildSelenium = async (headless) => {
         options.addArguments('disable-gpu');
         options.addArguments('window-size=1920x1080');
     } else {
-        // await selenium.driver.manage().window().maximize();
+        await selenium.driver.manage().window().maximize();
     }
 
     console.log('lambda?' , data.environment === 'lambda');
@@ -259,18 +259,17 @@ const findSite = async (driver) => {
  * Function that emails the addresses in the targetEmails Array
  * @returns A Promise from the Email sent
  */
-const emailSites = async () => {
-    logging.info(NAMESPACE, 'emailSites: START');
-    aws.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, region: process.env.AWS_REGION });
-    const ses = new aws.SES({ region: process.env.AWS_REGION });
+const buildEmail = async () => {
+    logging.info(NAMESPACE, 'buildEmail: START');
+    
     const params = {
         Destination: {
             ToAddresses: data.targetEmails
         },
         Message: {
             Body: {
-                Text: { Data: buildEmail("string")},
-                Html: { Data: buildEmail("html")}
+                Text: { Data: createSiteEmail("string")},
+                Html: { Data: createSiteEmail("html")}
             },
             Subject: {
                 Data: "Campsite(s) Have Been Found"
@@ -279,7 +278,25 @@ const emailSites = async () => {
         Source: data.sourceEmail
     };
 
-    return ses.sendEmail(params).promise();
+    return await sendEmail(params);
+}
+
+/**
+ * Function to execute the sending of an email given parameters
+ * @param {Object} params Email Parameters
+ * @returns 
+ */
+const sendEmail = async (params) => {
+    const client = new SESClient({
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY, 
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, 
+            region: process.env.AWS_REGION
+        }
+    });
+
+    const command = new SendEmailCommand(params);
+    return await client.send(command);
 }
 
 /**
@@ -287,8 +304,8 @@ const emailSites = async () => {
  * @param {String} type What type of email are we building -- string or html
  * @returns 
  */
-const buildEmail = (type) => {
-    logging.info(NAMESPACE, 'buildEmail: ' , data.confirmedDates , type);
+const createSiteEmail = (type) => {
+    logging.info(NAMESPACE, 'createSiteEmail: ' , data.confirmedDates , type);
     const confirmedDatesString = data.confirmedDates.reduce((acc, currentDate)=> {
         acc += currentDate + "<br>";
         return acc;
@@ -324,4 +341,4 @@ const clearData = () => {
     data.currentMonths = {};
 }
 
-module.exports = { buildSelenium, clearData, convertListToString, digestEvent, emailSites, endSelenium, findSite, navigateToProperDate, validateEvent };
+module.exports = { buildSelenium, clearData, convertListToString, digestEvent, buildEmail, endSelenium, findSite, navigateToProperDate, validateEvent };

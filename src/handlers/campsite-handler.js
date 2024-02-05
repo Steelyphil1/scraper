@@ -20,7 +20,7 @@ const processScrape = async (event, count, context, callback) => {
         await utilities.findSite(driver);
         if(data.found){
             logging.info(NAMESPACE, 'processScrape: Campsite(s) Found -- Emailing');
-            await utilities.emailSites();
+            await utilities.buildEmail();
         } else {
             logging.info(NAMESPACE, 'processScrape: No Sites Found -- Not Emailing');
         }
