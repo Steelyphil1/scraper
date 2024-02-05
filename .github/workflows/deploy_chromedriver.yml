@@ -24,9 +24,6 @@ jobs:
           # Create a ZIP file containing chromedriver
           zip -qq chromedriver.zip chromedriver
 
-          # Inspect contents
-          unzip -l ./chromedriver.zip
-
           if [ -e "./chromedriver.zip" ]; then
             echo "File 'chromedriver.zip' exists."
           else
@@ -34,24 +31,35 @@ jobs:
             exit 1
           fi
 
-      - name: Debugging
+      - name: Debug Environment and AWS
         run: |
           ls -al
           pwd
           aws --version
-
-      - name: Debug AWS Lambda Layer
-        run: |
           aws s3 ls s3://camp-lite-dev/chromedriver/
           aws lambda list-layers
 
       - name: Package Lambda Layer
         run: |
-          # Copy the file to S3 and install it in Lambda Layer
+          # Copy the file to S3
           aws s3 cp ./chromedriver.zip s3://camp-lite-dev/chromedriver/chromedriver.zip
+
+          #  Install it in Lambda Layer
           aws lambda publish-layer-version --layer-name chromedriver --content S3Bucket=camp-lite-dev,S3Key=chromedriver/chromedriver.zip
 
-      - name: Debug AWS Lambda Layer After
+      - name: Debug AWS After
         run: |
           aws s3 ls s3://camp-lite-dev/chromedriver/
           aws lambda list-layers
+
+      - name: Get Latest Lambda Layer Version
+        id: get_layer_version
+        run: |
+          latest_version=$(aws lambda list-layer-versions --layer-name chromedriver --query 'LayerVersions[0].LayerVersionArn' --output text)
+          echo "Latest Layer Version ARN: $latest_version"
+          echo "::set-output name=layer_version_arn::$latest_version"
+
+      - name: Update Lambda Function
+        run: |
+         layer_version_arn=${{ steps.get_layer_version.outputs.layer_version_arn }}
+          aws lambda update-function-configuration --function-name camping-test --layers $layer_version_arn
