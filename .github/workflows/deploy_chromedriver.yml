@@ -20,19 +20,19 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create ZIP file
-              run: |
-                # Create a ZIP file containing chromedriver
-                zip -qq chromedriver.zip chromedriver
+        run: |
+          # Create a ZIP file containing chromedriver
+          zip -qq chromedriver.zip chromedriver
 
-                # Inspect contents
-                unzip -l ./chromedriver.zip
+          # Inspect contents
+          unzip -l ./chromedriver.zip
 
-                if [ -e "./chromedriver.zip" ]; then
-                  echo "File 'chromedriver.zip' exists."
-                else
-                  echo "File 'chromedriver.zip' not found."
-                  exit 1
-                fi
+          if [ -e "./chromedriver.zip" ]; then
+            echo "File 'chromedriver.zip' exists."
+          else
+            echo "File 'chromedriver.zip' not found."
+            exit 1
+          fi
 
       - name: Debugging
         run: |
