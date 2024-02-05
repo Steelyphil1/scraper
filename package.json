@@ -1,0 +1,28 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.504.0",
+    "chrome-aws-lambda": "^10.1.0",
+    "chromedriver": "^112.0.0",
+    "dotenv": "^16.0.3",
+    "nvm": "0.0.4",
+    "selenium-webdriver": "^4.8.2"
+  },
+  "scripts": {
+    "test": "start",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Steelyphil1/scraper.git"
+  },
+  "author": "Phillip Bay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Steelyphil1/scraper/issues"
+  },
+  "homepage": "https://github.com/Steelyphil1/scraper#readme"
+}
