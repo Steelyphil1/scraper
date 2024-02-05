@@ -15,16 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Check for Changes
-        id: check_changes
-        run: |
-          # Check if chromedriver has changed, set deploy_chromedriver appropriately
-          if [ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 'chromedriver')" ]; then
-            echo "::set-output name=deploy_chromedriver::true"
-          else
-            echo "::set-output name=deploy_chromedriver::false"
-          fi
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -33,7 +23,6 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Package Lambda Layer
-        if: steps.check_changes.outputs.deploy_chromedriver == 'true'
         env: 
           release_bucket: camp-lite-dev
           release_bucket_uri: s3://camp-lite-dev/chromedriver
