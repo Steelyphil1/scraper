@@ -1,11 +1,11 @@
 name: Deploy Chromedriver
 
-on:
+on: # On push to master, if chromedriver has been changed
   push:
     branches:
       - master
     paths:
-      - 'chromedriver'  # If chromedriver has changed
+      - 'chromedriver'
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
@@ -55,11 +55,13 @@ jobs:
       - name: Get Latest Lambda Layer Version
         id: get_layer_version
         run: |
+          # Retrieve the new lambda layer arn and assign it to an output variable
           latest_version=$(aws lambda list-layer-versions --layer-name chromedriver --query 'LayerVersions[0].LayerVersionArn' --output text)
           echo "Latest Layer Version ARN: $latest_version"
           echo "::set-output name=layer_version_arn::$latest_version"
 
       - name: Update Lambda Function
         run: |
-         layer_version_arn=${{ steps.get_layer_version.outputs.layer_version_arn }}
+          # Using the output variable from our get step, update the lambda function to use the new layer
+          layer_version_arn=${{ steps.get_layer_version.outputs.layer_version_arn }}
           aws lambda update-function-configuration --function-name camping-test --layers $layer_version_arn
