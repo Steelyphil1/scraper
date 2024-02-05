@@ -1,0 +1,46 @@
+name: Deploy Chromedriver
+
+on:
+  push:
+    paths:
+      - 'chromedriver'  # If chromedriver has changed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check for Changes
+        id: check_changes
+        run: |
+          # Check if chromedriver has changed, set deploy_chromedriver appropriately
+          if [ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 'chromedriver')" ]; then
+            echo "::set-output name=deploy_chromedriver::true"
+          else
+            echo "::set-output name=deploy_chromedriver::false"
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Package Lambda Layer
+        if: steps.check_changes.outputs.deploy_chromedriver == 'true'
+        env: 
+          release_bucket: camp-lite-dev
+          release_bucket_uri: s3://camp-lite-dev/chromedriver
+          release_id: ${{ format('chromedriver-{0}.zip', github.head_ref )}}
+          release_layer: chromedriver
+        run: |
+          # Create a ZIP file containing chromedriver
+          zip -qq $release_id chromedriver
+
+          # Copy the file to S3 and install it in Lambda Layer
+          aws s3 cp $release_id $release_bucket_uri
+          aws lambda publish-layer-version --layer-name $release_layer
