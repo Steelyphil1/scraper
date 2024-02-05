@@ -145,6 +145,7 @@ const compileDates = () => {
  */
 const buildSelenium = async (headless) => {
     logging.info(NAMESPACE, 'buildSelenium: START');
+    console.log('test');
     const options = new chrome.Options();
     if(headless){
         options.addArguments('headless');
