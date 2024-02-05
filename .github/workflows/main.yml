@@ -31,5 +31,5 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
-          function_name: campsiteScraper
+          function_name: camping-test
           zip_file: bundle.zip
