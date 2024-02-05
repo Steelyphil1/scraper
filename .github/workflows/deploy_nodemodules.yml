@@ -20,4 +20,56 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+
+      - name: Create NodeJS Directory
+        run: |
+          mkdir nodejs
+          cp -R node_modules package.json package-lock.json nodejs/
+
+      - name: Create ZIP file
+        run: |
+          # Create a ZIP file containing node modules and package info
+          
+          zip -qq -r nodejs.zip nodejs
+
+          if [ -e "./nodejs.zip" ]; then
+            echo "File 'nodejs.zip' exists."
+          else
+            echo "File 'nodejs.zip' not found."
+            exit 1
+          fi
+
+      - name: Debug Environment and AWS
+        run: |
+          ls -al
+          pwd
+          aws --version
+          aws s3 ls s3://camp-lite-dev/node-modules/
+          aws lambda list-layers
+
+      - name: Package Lambda Layer
+        run: |
+          # Copy the zip to S3
+          aws s3 cp ./nodejs.zip s3://camp-lite-dev/node-modules/nodejs.zip
+
+          #  Install it in Lambda Layer
+          aws lambda publish-layer-version --layer-name node-layer --content S3Bucket=camp-lite-dev,S3Key=node-modules/nodejs.zip
+
+      - name: Debug AWS After
+        run: |
+          aws s3 ls s3://camp-lite-dev/node-modules/
+          aws lambda list-layers
+
+      - name: Get Latest Lambda Layer Version
+        id: get_layer_version
+        run: |
+          # Retrieve the new lambda layer arn and assign it to an output variable
+          latest_version=$(aws lambda list-layer-versions --layer-name node-layer --query 'LayerVersions[0].LayerVersionArn' --output text)
+          echo "Latest Layer Version ARN: $latest_version"
+          echo "::set-output name=layer_version_arn::$latest_version"
+
+      - name: Update Lambda Function
+        run: |
+          # Using the output variable from our get step, update the lambda function to use the new layer
+          layer_version_arn=${{ steps.get_layer_version.outputs.layer_version_arn }}
+          aws lambda update-function-configuration --function-name camping-test --layers $layer_version_arn
