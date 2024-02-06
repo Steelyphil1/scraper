@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@aws-crypto/crc32": "^5.2.0",
     "@aws-sdk/client-ses": "^3.504.0",
     "chrome-aws-lambda": "^10.1.0",
     "chromedriver": "^112.0.0",
