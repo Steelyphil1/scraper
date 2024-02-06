@@ -162,12 +162,13 @@ const buildSelenium = async (headless) => {
         options.addArguments('--no-sandbox');
         options.addArguments('--disable-dev-shm-usage');
         // promisify exec
-        // try{
-        //     const res = await promisfyExec('ls -R ~/opt');
-        //     console.log('res: ' , res);
-        // } catch (err) {
-        //     console.log('errrrrrr: ' , err);
-        // }
+        try{
+            // const res = await promisfyExec('ls -R ~/opt');
+            const res = await promisfyExec('ls -l /opt/chromedriver/chromedriver');
+            console.log('res: ' , res);
+        } catch (err) {
+            console.log('errrrrrr: ' , err);
+        }
        
         // const res = await execShellCommand('ls -R var/task');
         // console.log('res: ' , res);
@@ -186,7 +187,7 @@ const buildSelenium = async (headless) => {
         //selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
     }
     selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
-    
+
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
 };
