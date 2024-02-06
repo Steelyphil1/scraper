@@ -60,13 +60,19 @@ jobs:
           aws s3 ls s3://camp-lite-dev/node-modules/
           aws lambda list-layers
 
-      - name: Get Latest Lambda Layer Version
-        id: get_layer_version
+      - name: Get Existing Lambda Layers
+        id: get_existing_layers
         run: |
-          # Retrieve the new lambda layer arn and assign it to an output variable
-          latest_version=$(aws lambda list-layer-versions --layer-name node-layer --query 'LayerVersions[0].LayerVersionArn' --output text)
-          echo "Latest Layer Version ARN: $latest_version"
-          echo "::set-output name=layer_version_arn::$latest_version"
+          existing_layers=$(aws lambda get-function-configuration --function-name camping-test --query 'Layers[*].Arn' --output text)
+          echo "::set-output name=existing_layers::$existing_layers"
+
+      # - name: Get Latest Lambda Layer Version
+      #   id: get_layer_version
+      #   run: |
+      #     # Retrieve the new lambda layer arn and assign it to an output variable
+      #     latest_version=$(aws lambda list-layer-versions --layer-name node-layer --query 'LayerVersions[0].LayerVersionArn' --output text)
+      #     echo "Latest Layer Version ARN: $latest_version"
+      #     echo "::set-output name=layer_version_arn::$latest_version"
 
       - name: Update Lambda Function
         run: |
