@@ -11,6 +11,8 @@ const reservecaServicer = require('../servicers/reserveca-servicer');
 const NAMESPACE = 'utilities';
 const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 
+const chromedriverPath = '/opt/chromedriver/chromedriver'
+
 /**
  * Overwrite to create a String format method
  * @returns new formatted String
@@ -157,13 +159,15 @@ const buildSelenium = async (headless) => {
 
     console.log('lambda?' , data.environment === 'lambda');
     if(data.environment === 'lambda'){
+        options.addArguments('--no-sandbox');
+        options.addArguments('--disable-dev-shm-usage');
         // promisify exec
-        try{
-            const res = await promisfyExec('ls -R ~/opt');
-            console.log('res: ' , res);
-        } catch (err) {
-            console.log('errrrrrr: ' , err);
-        }
+        // try{
+        //     const res = await promisfyExec('ls -R ~/opt');
+        //     console.log('res: ' , res);
+        // } catch (err) {
+        //     console.log('errrrrrr: ' , err);
+        // }
        
         // const res = await execShellCommand('ls -R var/task');
         // console.log('res: ' , res);
@@ -176,14 +180,13 @@ const buildSelenium = async (headless) => {
         //     executablePath: await chromium.executablePath,
         //     headless: chromium.headless
         //   });
-        // options.setChromeBinaryPath('/opt/chromedriver/chromedriver');
+        options.setChromeBinaryPath(chromedriverPath);
         // process.env.CHROME_PATH = '/opt/chromedriver/chromedriver';
         //chrome.setDefaultService(new chrome.ServiceBuilder(chrome.BinaryPath.getChromeDriverExecutablePath()).build());
-        // selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
-    } else {
-        selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
+        //selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
     }
     
+    selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
 };
