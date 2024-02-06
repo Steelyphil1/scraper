@@ -53,7 +53,7 @@ jobs:
           aws s3 cp ./nodejs.zip s3://camp-lite-dev/node-modules/nodejs.zip
 
           #  Install it in Lambda Layer
-          aws lambda publish-layer-version --layer-name node-layer --content S3Bucket=camp-lite-dev,S3Key=node-modules/nodejs.zip --compatible-runtimes nodejs20.x
+          aws lambda publish-layer-version --layer-name node-layer --content S3Bucket=camp-lite-dev,S3Key=node-modules/nodejs.zip --compatible-runtimes nodejs20.x --compatible-architectures arm64
 
       - name: Debug AWS After
         run: |

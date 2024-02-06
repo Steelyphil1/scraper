@@ -45,7 +45,7 @@ jobs:
           aws s3 cp ./chromedriver.zip s3://camp-lite-dev/chromedriver/chromedriver.zip
 
           #  Install it in Lambda Layer
-          aws lambda publish-layer-version --layer-name chromedriver --content S3Bucket=camp-lite-dev,S3Key=chromedriver/chromedriver.zip --compatible-runtimes nodejs20.x
+          aws lambda publish-layer-version --layer-name chromedriver --content S3Bucket=camp-lite-dev,S3Key=chromedriver/chromedriver.zip --compatible-runtimes nodejs20.x --compatible-architectures arm64
 
       - name: Debug AWS After
         run: |
