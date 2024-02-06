@@ -185,8 +185,8 @@ const buildSelenium = async (headless) => {
         //chrome.setDefaultService(new chrome.ServiceBuilder(chrome.BinaryPath.getChromeDriverExecutablePath()).build());
         //selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
     }
-    
     selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
+    
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
 };
