@@ -52,16 +52,22 @@ jobs:
           aws s3 ls s3://camp-lite-dev/chromedriver/
           aws lambda list-layers
 
-      - name: Get Latest Lambda Layer Version
-        id: get_layer_version
+      # - name: Get Latest Lambda Layer Version
+      #   id: get_layer_version
+      #   run: |
+      #     # Retrieve the new lambda layer arn and assign it to an output variable
+      #     latest_version=$(aws lambda list-layer-versions --layer-name chromedriver --query 'LayerVersions[0].LayerVersionArn' --output text)
+      #     echo "Latest Layer Version ARN: $latest_version"
+      #     echo "::set-output name=layer_version_arn::$latest_version"
+
+      - name: Get Existing Lambda Layers
+        id: get_existing_layers
         run: |
-          # Retrieve the new lambda layer arn and assign it to an output variable
-          latest_version=$(aws lambda list-layer-versions --layer-name chromedriver --query 'LayerVersions[0].LayerVersionArn' --output text)
-          echo "Latest Layer Version ARN: $latest_version"
-          echo "::set-output name=layer_version_arn::$latest_version"
+          existing_layers=$(aws lambda get-function-configuration --function-name camping-test --query 'Layers[*].Arn' --output text)
+          echo "::set-output name=existing_layers::$existing_layers"
 
       - name: Update Lambda Function
         run: |
           # Using the output variable from our get step, update the lambda function to use the new layer
-          layer_version_arn=${{ steps.get_layer_version.outputs.layer_version_arn }}
-          aws lambda update-function-configuration --function-name camping-test --layers $layer_version_arn
+          existing_layers=${{ steps.get_existing_layers.outputs.existing_layers }}
+          aws lambda update-function-configuration --function-name camping-test --layers $existing_layers
