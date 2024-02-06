@@ -77,5 +77,5 @@ jobs:
       - name: Update Lambda Function
         run: |
           # Using the output variable from our get step, update the lambda function to use the new layer
-          layer_version_arn=${{ steps.get_layer_version.outputs.layer_version_arn }}
-          aws lambda update-function-configuration --function-name camping-test --layers $layer_version_arn
+          existing_layers=${{ steps.get_existing_layers.outputs.existing_layers }}
+          aws lambda update-function-configuration --function-name camping-test --layers $existing_layers
