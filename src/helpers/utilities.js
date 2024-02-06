@@ -181,13 +181,16 @@ const buildSelenium = async (headless) => {
         //     executablePath: await chromium.executablePath,
         //     headless: chromium.headless
         //   });
+        console.log('here1');
         options.setChromeBinaryPath(chromedriverPath);
         // process.env.CHROME_PATH = '/opt/chromedriver/chromedriver';
         //chrome.setDefaultService(new chrome.ServiceBuilder(chrome.BinaryPath.getChromeDriverExecutablePath()).build());
         //selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
     }
+    console.log('here2');
     selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
-
+    console.log('here3');
+    
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
 };
