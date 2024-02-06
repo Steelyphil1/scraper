@@ -4,5 +4,4 @@ api/db/unanswered.json
 .DS_Store
 .idea
 .env
-build
 .vscode
