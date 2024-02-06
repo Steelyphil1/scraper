@@ -13,7 +13,8 @@ const processScrape = async (event, count, context, callback) => {
     utilities.digestEvent(event);
     utilities.validateEvent(event);
     utilities.buildSelenium(true);
-    driver = selenium.driver;
+    const driver = selenium.driver;
+    console.log('driver: ' , driver);
     await driver.get(constants.campsites[data.website][data.campground].url);
     const navigateReturn = await utilities.navigateToProperDate(driver);
     if(navigateReturn === 0){
