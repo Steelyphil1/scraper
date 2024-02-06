@@ -1,7 +1,6 @@
 logs/*
 !.gitkeep
 api/db/unanswered.json
-tmp
 .DS_Store
 .idea
 .env
