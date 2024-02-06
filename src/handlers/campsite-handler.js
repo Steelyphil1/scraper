@@ -12,7 +12,7 @@ const processScrape = async (event, count, context, callback) => {
     utilities.clearData();
     utilities.digestEvent(event);
     utilities.validateEvent(event);
-    utilities.buildSelenium(true);
+    await utilities.buildSelenium(true);
     const driver = selenium.driver;
     console.log('driver: ' , driver);
     await driver.get(constants.campsites[data.website][data.campground].url);
