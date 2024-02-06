@@ -162,13 +162,13 @@ const buildSelenium = async (headless) => {
         options.addArguments('--no-sandbox');
         options.addArguments('--disable-dev-shm-usage');
         // promisify exec
-        try{
-            // const res = await promisfyExec('ls -R ~/opt');
-            const res = await promisfyExec('ls -l /opt/chromedriver/chromedriver');
-            console.log('res: ' , res);
-        } catch (err) {
-            console.log('errrrrrr: ' , err);
-        }
+        // try{
+        //     // const res = await promisfyExec('ls -R ~/opt');
+        //     const res = await promisfyExec('ls -l /opt/chromedriver/chromedriver');
+        //     console.log('res: ' , res);
+        // } catch (err) {
+        //     console.log('errrrrrr: ' , err);
+        // }
        
         // const res = await execShellCommand('ls -R var/task');
         // console.log('res: ' , res);
@@ -192,26 +192,26 @@ const buildSelenium = async (headless) => {
     selenium.until = webdriver.until;
 };
 
-const promisfyExec = async (cmd) => {
-    return new Promise((resolve, reject) => {
-        console.log('here with ' , cmd);
-        exec(cmd, (err, stdout, stderr) => {
-            if(err){
-                console.log('err: ', err);
-                reject(err);
-            }
-            if(stderr){
-                console.log('stderr: ' , stderr);
-                reject(err);
-            }
-            if(stdout){
-                console.log('stdout: ' , stdout);
-                resolve(stdout);
-            }
-            console.log('here with nothing I guess');
-        });
-    })
-}
+// const promisfyExec = async (cmd) => {
+//     return new Promise((resolve, reject) => {
+//         console.log('here with ' , cmd);
+//         exec(cmd, (err, stdout, stderr) => {
+//             if(err){
+//                 console.log('err: ', err);
+//                 reject(err);
+//             }
+//             if(stderr){
+//                 console.log('stderr: ' , stderr);
+//                 reject(err);
+//             }
+//             if(stdout){
+//                 console.log('stdout: ' , stdout);
+//                 resolve(stdout);
+//             }
+//             console.log('here with nothing I guess');
+//         });
+//     })
+// }
 
 /**
  * Function that ends the Selenium Driver
