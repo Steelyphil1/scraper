@@ -70,4 +70,8 @@ jobs:
         run: |
           # Using the output variable from our get step, update the lambda function to use the new layer
           existing_layers=${{ steps.get_existing_layers.outputs.existing_layers }}
-          aws lambda update-function-configuration --function-name camping-test --layers $existing_layers
+          echo "existing layers in update: $existing_layers"
+          for arn in $existing_layers; do
+            aws lambda update-function-configuration --function-name camping-test --layers $arn
+          done
+          # aws lambda update-function-configuration --function-name camping-test --layers $existing_layers
