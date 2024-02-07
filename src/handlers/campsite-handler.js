@@ -15,7 +15,11 @@ const processScrape = async (event, count, context, callback) => {
     await utilities.buildSelenium(true);
     const driver = selenium.driver;
     console.log('driver: ' , driver);
-    await driver.get(constants.campsites[data.website][data.campground].url);
+    try {
+        await driver.get(constants.campsites[data.website][data.campground].url);
+    } catch (e) {
+        console.log('error in .get: ' , e);
+    }
     const navigateReturn = await utilities.navigateToProperDate(driver);
     if(navigateReturn === 0){
         await utilities.findSite(driver);

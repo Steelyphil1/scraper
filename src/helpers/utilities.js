@@ -159,6 +159,7 @@ const buildSelenium = async (headless) => {
 
     console.log('lambda?' , data.environment === 'lambda');
     if(data.environment === 'lambda'){
+        options.addArguments('--headless');
         options.addArguments('--no-sandbox');
         options.addArguments('--disable-dev-shm-usage');
         // promisify exec
@@ -190,7 +191,7 @@ const buildSelenium = async (headless) => {
     console.log('here2');
     selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
     console.log('here3');
-    
+
     selenium.by = webdriver.By;
     selenium.until = webdriver.until;
 };
