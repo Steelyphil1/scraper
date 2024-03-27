@@ -183,17 +183,21 @@ const buildSelenium = async (headless) => {
         //     headless: chromium.headless
         //   });
         console.log('here1');
-        options.setChromeBinaryPath(chromedriverPath);
+        selenium.driver = new Builder().forBrowser('chrome').setChromeOptions(options).setChromeOptions(new chrome.ServiceBuilder(chromedriverPath)).build();
+        selenium.by = webdriver.By;
+        selenium.until = webdriver.until;
+        //options.setChromeBinaryPath(chromedriverPath); //Newest Comment
+        
         // process.env.CHROME_PATH = '/opt/chromedriver/chromedriver';
         //chrome.setDefaultService(new chrome.ServiceBuilder(chrome.BinaryPath.getChromeDriverExecutablePath()).build());
         //selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
     }
-    console.log('here2');
-    selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
-    console.log('here3');
+    // console.log('here2');
+    // selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
+    // console.log('here3');
 
-    selenium.by = webdriver.By;
-    selenium.until = webdriver.until;
+    // selenium.by = webdriver.By;
+    // selenium.until = webdriver.until;
 };
 
 const promisfyExec = async (cmd) => {
