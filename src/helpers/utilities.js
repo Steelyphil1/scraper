@@ -183,7 +183,7 @@ const buildSelenium = async (headless) => {
         //     headless: chromium.headless
         //   });
         console.log('here1');
-        selenium.driver = new Builder().forBrowser('chrome').setChromeOptions(options).setChromeOptions(new chrome.ServiceBuilder(chromedriverPath)).build();
+        selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).setChromeOptions(new chrome.ServiceBuilder(chromedriverPath)).build();
         selenium.by = webdriver.By;
         selenium.until = webdriver.until;
         //options.setChromeBinaryPath(chromedriverPath); //Newest Comment
