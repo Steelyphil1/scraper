@@ -11,7 +11,7 @@ const reservecaServicer = require('../servicers/reserveca-servicer');
 const NAMESPACE = 'utilities';
 const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 
-const chromedriverPath = '/opt/chromedriver/chromedriver'
+const chromedriverPath = '/opt/chromedriver/chromedriver';
 
 /**
  * Overwrite to create a String format method
@@ -163,13 +163,13 @@ const buildSelenium = async (headless) => {
         options.addArguments('--no-sandbox');
         options.addArguments('--disable-dev-shm-usage');
         //promisify exec
-        try{
-            // const res = await promisfyExec('ls -R ~/opt');
-            const res = await promisfyExec('chmod +x /opt/chromedriver/chromedriver');
-            console.log('res: ' , res);
-        } catch (err) {
-            console.log('errrrrrr: ' , err);
-        }
+        // try{
+        //     // const res = await promisfyExec('ls -R ~/opt');
+        //     const res = await promisfyExec('chmod +x /opt/chromedriver/chromedriver');
+        //     console.log('res: ' , res);
+        // } catch (err) {
+        //     console.log('errrrrrr: ' , err);
+        // }
        
         // const res = await execShellCommand('ls -R var/task');
         // console.log('res: ' , res);
