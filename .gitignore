@@ -5,3 +5,4 @@ api/db/unanswered.json
 .idea
 .env
 .vscode
+chromedriver
