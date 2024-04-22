@@ -7,19 +7,18 @@ const NAMESPACE = 'servicers/recreation-servicer';
 
 /**
  * Function that changes the tables dates to adjust the Month for Recreation.Gov
- * @param {Object} driver Main Selenium Driver Object
  */
-const navigateToProperMonth = async (driver) => {
+const navigateToProperMonth = async () => {
     logging.info(NAMESPACE, 'navigateToProperMonth: START');
-    const months = await getRecreationGovMonths(driver);
+    const months = await getRecreationGovMonths();
     if(months){
         if(constants.months[data.monthMin].name in months && constants.months[data.monthMax].name in months){
             logging.info(NAMESPACE, 'Navigated to the correct Months');
             return 0;
         } else {
             logging.info(NAMESPACE, "Not In the correct months, forwarding 5 days");
-            await recGovFiveDays(driver);
-            return await navigateToProperMonth(driver);
+            await recGovFiveDays();
+            return await navigateToProperMonth();
         }
     } else {
         logging.info(NAMESPACE, "MONTHS FALSEY, RETURNING: ", months)
@@ -29,38 +28,36 @@ const navigateToProperMonth = async (driver) => {
 
 /**
  * Function that changes the tables dates to adjust the Month
- * @param {Object} driver Main Selenium Driver Object
  */
-const navigateToProperDay = async (driver) => {
+const navigateToProperDay = async () => {
     logging.info(NAMESPACE, 'navigateToProperDay: START');
-    let dates = await getRecreationGovDays(driver);
+    let dates = await getRecreationGovDays();
     if(data.dayMin in dates && data.dayMax in dates){
         logging.info(NAMESPACE, 'Navigated to the correct Dates');
         return 0;
     } else {
         logging.info(NAMESPACE, "Correct Dates not displayed, forwarding 5 days");
-        await recGovFiveDays(driver);
-        return await navigateToProperDay(driver);
+        await recGovFiveDays();
+        return await navigateToProperDay();
     }
 }
 
 /**
  * Function that finds the Forward 5 Days button on Recreation.Gov and presses it
- * @param {Object} driver Selenium Driver Object
+ 
  */
-const recGovFiveDays = async (driver) => {
+const recGovFiveDays = async () => {
     logging.info(NAMESPACE, 'recGovFiveDays: START');
-    await driver.findElement(selenium.by.xpath('//button[@aria-label="Go Forward 5 Days"]')).click();
+    await selenium.driver.findElement(selenium.by.xpath('//button[@aria-label="Go Forward 5 Days"]')).click();
 }
 
 /**
  * Function that retrieves the currently displayed Campsites Month(s)
- * @param {Object} driver Selenium Driver Object
  * @returns Map of the Current Months being displayed on on Recreation.gov
  */
-const getRecreationGovMonths = async (driver) => {
+const getRecreationGovMonths = async () => {
     logging.info(NAMESPACE, 'getRecreationGovMonths: START');
-    let monthElements = await driver.findElements(selenium.by.xpath('//tr[@class="rec-table-months-row"]//th//div//span'));
+    let monthElements = await selenium.driver.findElements(selenium.by.xpath('//tr[@class="rec-table-months-row"]//th//div//span'));
     if(monthElements !== undefined && monthElements.length > 0){
         const months = {};
         for(let monthElement of monthElements){
@@ -77,12 +74,11 @@ const getRecreationGovMonths = async (driver) => {
 
 /**
  * Function that retrieves the currently displayed Campsites Dates
- * @param {Object} driver Selenium Driver Object
  * @returns Map of the Current Dates being displayed on on Recreation.gov
  */
-const getRecreationGovDays = async (driver) => {
+const getRecreationGovDays = async () => {
     logging.info(NAMESPACE, 'getRecreationGovDays: START');
-    let dateElements = await driver.findElements(selenium.by.xpath('//span[@class="date"]'));
+    let dateElements = await selenium.driver.findElements(selenium.by.xpath('//span[@class="date"]'));
     if(dateElements !== undefined){
         const dates = {};
         for(let dateElement of dateElements){
@@ -99,11 +95,10 @@ const getRecreationGovDays = async (driver) => {
 
 /**
  * Function that finds a Specific Site for a given Date/Date Range for Recreation.Gov
- * @param {Object} driver Main Selenium Driver Object
  */
-const findSiteRecreation = async (driver) => {
+const findSiteRecreation = async () => {
     logging.info(NAMESPACE, 'findSiteRecreation: START');
-    let siteElements = await driver.findElements(selenium.by.xpath("//button[text()[contains(., 'A')]]"));
+    let siteElements = await selenium.driver.findElements(selenium.by.xpath("//button[text()[contains(., 'A')]]"));
     if(siteElements && siteElements.length > 0){
         let siteElementToClick;
         for(let siteElement of siteElements){
@@ -154,28 +149,35 @@ const findSiteRecreation = async (driver) => {
             }
         }
         if(data.login && siteElementToClick) {
-            await driver.executeScript('arguments[0].scrollIntoView(true);', siteElementToClick);
-            await driver.sleep(500);
-            await driver.wait(selenium.until.elementIsEnabled(siteElementToClick));
-            await driver.executeScript('arguments[0].click();', siteElementToClick);
-            await driver.findElement(selenium.by.xpath(`//button[contains(., 'Add to Cart')]`)).click();
+            await selenium.driver.executeScript('arguments[0].scrollIntoView(true);', siteElementToClick);
+            await selenium.driver.sleep(500);
+            await selenium.driver.wait(selenium.until.elementIsEnabled(siteElementToClick));
+            await selenium.driver.executeScript('arguments[0].click();', siteElementToClick);
+            await selenium.driver.findElement(selenium.by.xpath(`//button[contains(., 'Add to Cart')]`)).click();
             let proceed;
             try {
-                proceed = await driver.findElement(selenium.by.xpath(`//button[contains(., 'Proceed with Reservation')]`));
+                proceed = await selenium.driver.findElement(selenium.by.xpath(`//button[contains(., 'Proceed with Reservation')]`));
             } catch (error) {
                 console.log("Button not found");
                 return; // Exit the function if the button is not found
             }
             await proceed.click();
-            await driver.sleep(5000);
+            await selenium.driver.sleep(5000);
         }
     } else {
         logging.info(NAMESPACE, 'findSiteRecreation: No Available Sites Found');
     }
 }
 
-const getSiteUrl = async (driver, siteNumber) => {
-    let siteLink = await driver.findElements(selenium.by.xpath(`//a[contains(.,'${siteNumber}')]`));
+/**
+ * Function to get the URL of an available campsite
+ * @param {string} siteNumber Number of the site for which to get the URL to the reserve page
+ * @returns 
+ */
+const getSiteUrl = async (siteNumber) => {
+    logging.info(NAMESPACE, 'getSiteUrl: START');
+
+    let siteLink = await selenium.driver.findElements(selenium.by.xpath(`//a[contains(.,'${siteNumber}')]`));
     if(siteLink !== undefined && siteLink.length > 0){
         const link = siteLink[0];
         return await link.getAttribute("href");
@@ -185,23 +187,26 @@ const getSiteUrl = async (driver, siteNumber) => {
     }
 }
 
-const loginRecreation = async (driver) => {
+/**
+ * Function to login to the Recreation.Gov website from any campsite page
+ */
+const loginRecreation = async () => {
     logging.info(NAMESPACE, 'loginRecreation: START');
-    const signInButton = await driver.findElement(selenium.by.xpath(`//button[@aria-label="Sign Up or Log In"]`));
+
+    const signInButton = await selenium.driver.findElement(selenium.by.xpath(`//button[@aria-label="Sign Up or Log In"]`));
     if(signInButton) {
         await signInButton.click();
-        const emailField = await driver.findElement(selenium.by.xpath(`//input[@name="email"]`));
+        const emailField = await selenium.driver.findElement(selenium.by.xpath(`//input[@name="email"]`));
         if(emailField){
             await emailField.sendKeys(process.env.EMAIL);
         }
-        const passField = await driver.findElement(selenium.by.xpath(`//input[@type="password"]`));
+        const passField = await selenium.driver.findElement(selenium.by.xpath(`//input[@type="password"]`));
         if(passField){
             await passField.sendKeys(process.env.PASSWORD);
         }
-        const loginButton = await driver.findElement(selenium.by.xpath(`//button[@type="submit"]`));
+        const loginButton = await selenium.driver.findElement(selenium.by.xpath(`//button[@type="submit"]`));
         await loginButton.click();
     }
-    logging.info(NAMESPACE, 'loginRecreation: END');
 }
 
 module.exports = { findSiteRecreation, loginRecreation, navigateToProperDay, navigateToProperMonth };

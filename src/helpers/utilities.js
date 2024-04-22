@@ -1,16 +1,14 @@
 const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-const { exec } = require('child_process');
 const selenium = require('./selenium');
 const logging = require('./logging');
 const constants = require('./constants');
 const data = require('./data');
+const campsiteHandler = require('../handlers/campsite-handler');
 const recreationServicer = require('../servicers/recreation-servicer');
 const reservecaServicer = require('../servicers/reserveca-servicer');
 const NAMESPACE = 'utilities';
 const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
-
-const chromedriverPath = '/opt/chromedriver/chromedriver';
 
 /**
  * Overwrite to create a String format method
@@ -31,6 +29,7 @@ String.format = function() {
  */
 const validateEvent = (event) => {
     logging.info(NAMESPACE, 'validateEvent: START');
+
     if(!event.website || !event.campground || !event.type || !event.yearMin || !event.monthMin || !event.dayMin || !event.yearMax || !event.monthMax || !event.dayMax || event.range === undefined || event.range === null){
         throw 'Please input all required information';
     }
@@ -77,9 +76,6 @@ const validateEvent = (event) => {
         console.log('dates: ' , data.dates);
         throw 'Range cannot be over 7 days';
     }
-    // if(((constants.months[event.monthMax] - constants.months[event.monthMin]) > 1) || ((constants.months[event.monthMax] - constants.months[event.monthMin]) < 0)){
-    //     throw 'Months must be the same or the monthMax 1 month ahead';
-    // }
 }
 
 /**
@@ -88,6 +84,7 @@ const validateEvent = (event) => {
  */
 const digestEvent = (event) => {
     logging.info(NAMESPACE, 'digestEvent: START');
+    
     data.firstName = event.firstName;
     data.lastName = event.lastName;
     data.website = event.website;
@@ -144,104 +141,48 @@ const compileDates = () => {
 
 /**
  * Functionn that builds the Selenium Driver and fills the objects in selenium.js
- * @param {Boolean} headless Boolean value for Headless or not
  */
 const buildSelenium = async () => {
     logging.info(NAMESPACE, 'buildSelenium: START');
+
     const options = new chrome.Options();
     if(data.headless){
         options.addArguments('headless');
         options.addArguments('disable-gpu');
         options.addArguments('window-size=1920x1080');
     }
-
-    if(data.environment === 'lambda'){
-        options.addArguments('--headless');
-        options.addArguments('--no-sandbox');
-        options.addArguments('--disable-dev-shm-usage');
-        //promisify exec
-        // try{
-        //     // const res = await promisfyExec('ls -R ~/opt');
-        //     const res = await promisfyExec('chmod +x /opt/chromedriver/chromedriver');
-        //     console.log('res: ' , res);
-        // } catch (err) {
-        //     console.log('errrrrrr: ' , err);
-        // }
-       
-        // const res = await execShellCommand('ls -R var/task');
-        // console.log('res: ' , res);
-        // const resOpt = await execShellCommand('ls -R /opt');
-        // console.log('resOpt: ', resOpt);
-
-        // browser = await chromeaws.puppeteer.launch({
-        //     args: chromium.args,
-        //     defaultViewport: chromium.defaultViewport,
-        //     executablePath: await chromium.executablePath,
-        //     headless: chromium.headless
-        //   });
-
-        selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).setChromeService(new chrome.ServiceBuilder(chromedriverPath)).build();
-        selenium.by = webdriver.By;
-        selenium.until = webdriver.until;
-        //options.setChromeBinaryPath(chromedriverPath); //Newest Comment
-        
-        // process.env.CHROME_PATH = '/opt/chromedriver/chromedriver';
-        //chrome.setDefaultService(new chrome.ServiceBuilder(chrome.BinaryPath.getChromeDriverExecutablePath()).build());
-        //selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
-    }
      selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
-
      selenium.by = webdriver.By;
      selenium.until = webdriver.until;
 };
-
-const promisfyExec = async (cmd) => {
-    return new Promise((resolve, reject) => {
-        console.log('here with ' , cmd);
-        exec(cmd, (err, stdout, stderr) => {
-            if(err){
-                console.log('err: ', err);
-                reject(err);
-            }
-            if(stderr){
-                console.log('stderr: ' , stderr);
-                reject(err);
-            }
-            if(stdout){
-                console.log('stdout: ' , stdout);
-                resolve(stdout);
-            }
-            console.log('here with nothing I guess');
-        });
-    })
-}
 
 /**
  * Function that ends the Selenium Driver
  */
 const endSelenium = () => {
     logging.info(NAMESPACE, 'endSelenium: START');
+
     selenium.driver.quit();
 }
 
 /**
  * Main Function for Navigating Recreation.Gov to the proper table dates
- * @param {Object} driver Main Selenium Driver Object
  */
-const navigateToProperDate = async (driver) => {
+const navigateToProperDate = async () => {
     logging.info(NAMESPACE, 'navigateToProperDate: START');
+
     if(data.website === 'recreation.gov'){
-        const monthReturn = await recreationServicer.navigateToProperMonth(driver);
+        const monthReturn = await recreationServicer.navigateToProperMonth();
         logging.info(NAMESPACE, "month returned with: ", monthReturn);
         if(monthReturn === 0) {
-            return await recreationServicer.navigateToProperDay(driver);
+            return await recreationServicer.navigateToProperDay();
         } else {
             return monthReturn;
         }
     } else if(data.website === 'reserveca'){
-        const monthReturn = await reservecaServicer.navigateToProperMonth(driver);
+        const monthReturn = await reservecaServicer.navigateToProperMonth();
         if(monthReturn === 0){
-            return await reservecaServicer.navigateToProperDay(driver, data.dayMin);
+            return await reservecaServicer.navigateToProperDay(data.dayMin);
         } else {
             return monthReturn;
         }
@@ -250,15 +191,15 @@ const navigateToProperDate = async (driver) => {
 
 /**
  * Function to route to the correct Service File for finding a Site
- * @param {Object} driver Main Selenium Driver Object 
  */
-const findSite = async (driver) => {
+const findSite = async () => {
     logging.info(NAMESPACE, 'findSite: START');
+
     if(data.website === 'recreation.gov'){
-        await recreationServicer.findSiteRecreation(driver);
+        await recreationServicer.findSiteRecreation();
     } else if(data.website === 'reserveca'){
         let day = new Date(data.dateMin);
-        await reservecaServicer.findSiteReserveCa(driver, day.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
+        await reservecaServicer.findSiteReserveCa(day.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
     }
 }
 
@@ -294,6 +235,8 @@ const buildEmail = async () => {
  * @returns 
  */
 const sendEmail = async (params) => {
+    logging.info(NAMESPACE, 'sendEmail: START');
+
     const client = new SESClient({
         credentials: {
             accessKeyId: process.env.AWS_ACCESS_KEY, 
@@ -313,6 +256,7 @@ const sendEmail = async (params) => {
  */
 const createSiteEmail = (type) => {
     logging.info(NAMESPACE, 'createSiteEmail: START');
+
     const confirmedDatesString = data.confirmedDates.reduce((acc, currentDate)=> {
         const dateUrlArray = currentDate.split("&");
         acc += `<a href="${dateUrlArray[1]}">`  + dateUrlArray[0] + "</a><br>";
@@ -328,6 +272,7 @@ const createSiteEmail = (type) => {
  */
 const convertListToString = (campsites) => {
     logging.info(NAMESPACE, 'convertListToString: START');
+
     let endString = '';
     if(campsites && campsites.length > 0){
         for (let site of campsites) {
@@ -349,14 +294,43 @@ const clearData = () => {
     data.currentMonths = {};
 }
 
-const login = async (driver) => {
+/**
+ * Function to route to the respective website login function
+ */
+const login = async () => {
+    logging.info(NAMESPACE, 'login: START');
+
     if(data.website === 'recreation.gov'){
-        await recreationServicer.loginRecreation(driver);
+        await recreationServicer.loginRecreation();
     } else if(data.website === 'reserveca'){
-        await reservecaServicer.loginReserveCa(driver);
+        await reservecaServicer.loginReserveCa();
     } else {
         console.log('INVALID WEBSITE')
     }
 }
 
-module.exports = { buildSelenium, clearData, convertListToString, digestEvent, buildEmail, endSelenium, findSite, login, navigateToProperDate, validateEvent };
+/**
+ * Function to recursively rerun the scraper based on the event config
+ * @param {Object} event Main lambda event object
+ */
+const handleRecursion = async (event) => {
+    logging.info(NAMESPACE, 'handleRecursion: START');
+
+    if(data.environment === 'local' && data.camparea === 'yosemite'){
+        await new Promise(r => setTimeout(r, 40000));
+        if(count % 3 === 0){
+            campsiteHandler.processScrape({...event, campground: 'upper-pines'}, count+1);
+        } else if(count % 3 === 1){
+            campsiteHandler.processScrape({...event, campground: 'lower-pines'}, count+1);
+        } else {
+            campsiteHandler.processScrape({...event, campground: 'north-pines'}, count+1);
+        }
+    } else if(data.environment === 'local'){
+        await new Promise(r => setTimeout(r, 40000));
+        campsiteHandler.processScrape(event);
+    } else {
+        logging.info("Non-local execution -- ending process");
+    }
+}
+
+module.exports = { buildEmail, buildSelenium, clearData, convertListToString, digestEvent, endSelenium, findSite, handleRecursion, login, navigateToProperDate, validateEvent };

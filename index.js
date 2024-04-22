@@ -11,7 +11,7 @@ exports.handler = (event, context, callback) => {
 
 const executeRequest = (event, context, callback) => {
     if (event !== undefined) {
-        campsiteHandler.processScrape(event, 0, context, callback);
+        campsiteHandler.processScrape(event, 0);
     } else {
         logging.error(NAMESPACE, "executeRequest: Event Undefined");
     }
