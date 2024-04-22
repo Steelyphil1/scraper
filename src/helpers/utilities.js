@@ -309,28 +309,4 @@ const login = async () => {
     }
 }
 
-/**
- * Function to recursively rerun the scraper based on the event config
- * @param {Object} event Main lambda event object
- */
-const handleRecursion = async (event) => {
-    logging.info(NAMESPACE, 'handleRecursion: START');
-
-    if(data.environment === 'local' && data.camparea === 'yosemite'){
-        await new Promise(r => setTimeout(r, 40000));
-        if(count % 3 === 0){
-            campsiteHandler.processScrape({...event, campground: 'upper-pines'}, count+1);
-        } else if(count % 3 === 1){
-            campsiteHandler.processScrape({...event, campground: 'lower-pines'}, count+1);
-        } else {
-            campsiteHandler.processScrape({...event, campground: 'north-pines'}, count+1);
-        }
-    } else if(data.environment === 'local'){
-        await new Promise(r => setTimeout(r, 40000));
-        campsiteHandler.processScrape(event);
-    } else {
-        logging.info("Non-local execution -- ending process");
-    }
-}
-
-module.exports = { buildEmail, buildSelenium, clearData, convertListToString, digestEvent, endSelenium, findSite, handleRecursion, login, navigateToProperDate, validateEvent };
+module.exports = { buildEmail, buildSelenium, clearData, convertListToString, digestEvent, endSelenium, findSite, login, navigateToProperDate, validateEvent };
