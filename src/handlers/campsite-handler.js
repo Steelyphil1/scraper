@@ -74,7 +74,7 @@ const handleRecursion = async (event, count) => {
             processScrape({...event, campground: 'north-pines'}, count+1);
         }
     } else if(data.environment === 'local'){
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise(r => setTimeout(r, 40000));
         processScrape(event, count+1);
     } else {
         logging.info("Non-local execution -- ending process");
