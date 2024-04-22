@@ -23,5 +23,7 @@ let targetEmails = [];
 let confirmedDates = [];
 let currentDates = {};
 let currentMonths = {};
+let login = false;
+let headless = true;
 
-module.exports = { campground, campsite, confirmedDates, currentDates, currentMonths, dates, dateDiff, dateFoundMap, dateMin, dateMax, dayMax, dayMin, environment, firstName, found, lastName, monthMax, monthMin, range, sourceEmail, targetEmails, type, website, yearMax, yearMin };
+module.exports = { campground, campsite, confirmedDates, currentDates, currentMonths, dates, dateDiff, dateFoundMap, dateMin, dateMax, dayMax, dayMin, environment, firstName, found, headless, lastName, login, monthMax, monthMin, range, sourceEmail, targetEmails, type, website, yearMax, yearMin };

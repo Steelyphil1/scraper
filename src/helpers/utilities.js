@@ -1,6 +1,5 @@
 const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-//const chromeaws = require('chrome-aws-lambda');
 const { exec } = require('child_process');
 const selenium = require('./selenium');
 const logging = require('./logging');
@@ -107,6 +106,8 @@ const digestEvent = (event) => {
     data.sourceEmail = event.sourceEmail;
     data.targetEmails = event.targetEmails;
     data.environment = event.environment;
+    data.login = event.login;
+    data.headless = event.headless;
     compileDates();
 }
 
@@ -145,19 +146,15 @@ const compileDates = () => {
  * Functionn that builds the Selenium Driver and fills the objects in selenium.js
  * @param {Boolean} headless Boolean value for Headless or not
  */
-const buildSelenium = async (headless) => {
+const buildSelenium = async () => {
     logging.info(NAMESPACE, 'buildSelenium: START');
-    console.log('test');
     const options = new chrome.Options();
-    if(headless){
+    if(data.headless){
         options.addArguments('headless');
         options.addArguments('disable-gpu');
         options.addArguments('window-size=1920x1080');
-    } else {
-        await selenium.driver.manage().window().maximize();
     }
 
-    console.log('lambda?' , data.environment === 'lambda');
     if(data.environment === 'lambda'){
         options.addArguments('--headless');
         options.addArguments('--no-sandbox');
@@ -182,7 +179,7 @@ const buildSelenium = async (headless) => {
         //     executablePath: await chromium.executablePath,
         //     headless: chromium.headless
         //   });
-        console.log('here1');
+
         selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).setChromeService(new chrome.ServiceBuilder(chromedriverPath)).build();
         selenium.by = webdriver.By;
         selenium.until = webdriver.until;
@@ -192,12 +189,10 @@ const buildSelenium = async (headless) => {
         //chrome.setDefaultService(new chrome.ServiceBuilder(chrome.BinaryPath.getChromeDriverExecutablePath()).build());
         //selenium.driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(new chromeaws.Options()).build();
     }
-    // console.log('here2');
-    // selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
-    // console.log('here3');
+     selenium.driver = new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
 
-    // selenium.by = webdriver.By;
-    // selenium.until = webdriver.until;
+     selenium.by = webdriver.By;
+     selenium.until = webdriver.until;
 };
 
 const promisfyExec = async (cmd) => {
@@ -317,9 +312,10 @@ const sendEmail = async (params) => {
  * @returns 
  */
 const createSiteEmail = (type) => {
-    logging.info(NAMESPACE, 'createSiteEmail: ' , data.confirmedDates , type);
+    logging.info(NAMESPACE, 'createSiteEmail: START');
     const confirmedDatesString = data.confirmedDates.reduce((acc, currentDate)=> {
-        acc += currentDate + "<br>";
+        const dateUrlArray = currentDate.split("&");
+        acc += `<a href="${dateUrlArray[1]}">`  + dateUrlArray[0] + "</a><br>";
         return acc;
     }, "");
     return type === 'html' ? String.format(constants.emailStringHTML, data.firstName, constants.campsites[data.website][data.campground].url, data.campground, confirmedDatesString) : String.format(constants.emailGreeting, data.firstName, constants.campsites[data.website][data.campground].url, data.campground) + confirmedDatesString + constants.emailOutro;
@@ -353,4 +349,14 @@ const clearData = () => {
     data.currentMonths = {};
 }
 
-module.exports = { buildSelenium, clearData, convertListToString, digestEvent, buildEmail, endSelenium, findSite, navigateToProperDate, validateEvent };
+const login = async (driver) => {
+    if(data.website === 'recreation.gov'){
+        await recreationServicer.loginRecreation(driver);
+    } else if(data.website === 'reserveca'){
+        await reservecaServicer.loginReserveCa(driver);
+    } else {
+        console.log('INVALID WEBSITE')
+    }
+}
+
+module.exports = { buildSelenium, clearData, convertListToString, digestEvent, buildEmail, endSelenium, findSite, login, navigateToProperDate, validateEvent };

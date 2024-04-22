@@ -38,7 +38,7 @@ const navigateToProperDay = async (driver) => {
         logging.info(NAMESPACE, 'Navigated to the correct Dates');
         return 0;
     } else {
-        logging.info(NAMESPACE, "Correct Dates not displayed, forwarding 5 days", dates);
+        logging.info(NAMESPACE, "Correct Dates not displayed, forwarding 5 days");
         await recGovFiveDays(driver);
         return await navigateToProperDay(driver);
     }
@@ -105,6 +105,7 @@ const findSiteRecreation = async (driver) => {
     logging.info(NAMESPACE, 'findSiteRecreation: START');
     let siteElements = await driver.findElements(selenium.by.xpath("//button[text()[contains(., 'A')]]"));
     if(siteElements && siteElements.length > 0){
+        let siteElementToClick;
         for(let siteElement of siteElements){
             let ariaLabel = await siteElement.getAttribute('aria-label');
             if(data.dates.some(date => ariaLabel.substring(0,12).includes(date))){
@@ -127,16 +128,19 @@ const findSiteRecreation = async (driver) => {
                     }
                 } else {
                     logging.info(NAMESPACE, 'Found Campsite -- ' + ariaLabel.substring(0, 23));
+                    const siteNumber = ariaLabel.match(/\b\d{3}\b/)[0];
                     if(data.range){
                         for(let date of Object.keys(data.dateFoundMap)){
                             if(ariaLabel.includes(date)){
+                                siteElementToClick = siteElement;
                                 data.dateFoundMap[date] = true;
-                                data.confirmedDates.push(ariaLabel);
+                                data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(driver, siteNumber));
                             }
                         }
                     } else {
+                        siteElementToClick = siteElement;
                         data.found = true;
-                        data.confirmedDates.push(ariaLabel);
+                        data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(driver, siteNumber));
                     }
                 }
             }
@@ -149,10 +153,55 @@ const findSiteRecreation = async (driver) => {
                 }
             }
         }
+        if(data.login && siteElementToClick) {
+            await driver.executeScript('arguments[0].scrollIntoView(true);', siteElementToClick);
+            await driver.sleep(500);
+            await driver.wait(selenium.until.elementIsEnabled(siteElementToClick));
+            await driver.executeScript('arguments[0].click();', siteElementToClick);
+            await driver.findElement(selenium.by.xpath(`//button[contains(., 'Add to Cart')]`)).click();
+            let proceed;
+            try {
+                proceed = await driver.findElement(selenium.by.xpath(`//button[contains(., 'Proceed with Reservation')]`));
+            } catch (error) {
+                console.log("Button not found");
+                return; // Exit the function if the button is not found
+            }
+            await proceed.click();
+            await driver.sleep(5000);
+        }
     } else {
         logging.info(NAMESPACE, 'findSiteRecreation: No Available Sites Found');
     }
 }
 
+const getSiteUrl = async (driver, siteNumber) => {
+    let siteLink = await driver.findElements(selenium.by.xpath(`//a[contains(.,'${siteNumber}')]`));
+    if(siteLink !== undefined && siteLink.length > 0){
+        const link = siteLink[0];
+        return await link.getAttribute("href");
+    } else {
+        console.log('No SiteLink Found');
+        return "";
+    }
+}
 
-module.exports = { findSiteRecreation, navigateToProperDay, navigateToProperMonth };
+const loginRecreation = async (driver) => {
+    logging.info(NAMESPACE, 'loginRecreation: START');
+    const signInButton = await driver.findElement(selenium.by.xpath(`//button[@aria-label="Sign Up or Log In"]`));
+    if(signInButton) {
+        await signInButton.click();
+        const emailField = await driver.findElement(selenium.by.xpath(`//input[@name="email"]`));
+        if(emailField){
+            await emailField.sendKeys(process.env.EMAIL);
+        }
+        const passField = await driver.findElement(selenium.by.xpath(`//input[@type="password"]`));
+        if(passField){
+            await passField.sendKeys(process.env.PASSWORD);
+        }
+        const loginButton = await driver.findElement(selenium.by.xpath(`//button[@type="submit"]`));
+        await loginButton.click();
+    }
+    logging.info(NAMESPACE, 'loginRecreation: END');
+}
+
+module.exports = { findSiteRecreation, loginRecreation, navigateToProperDay, navigateToProperMonth };

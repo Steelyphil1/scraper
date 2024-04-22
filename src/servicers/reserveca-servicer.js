@@ -174,4 +174,8 @@ const findSiteReserveCa = async (driver, day) => {
     }
 }
 
-module.exports = { findSiteReserveCa, navigateToProperMonth, navigateToProperDay };
+const loginReserveCa = async (driver) => {
+    logging.info(NAMESPACE, 'loginRecreation: START');
+}
+
+module.exports = { findSiteReserveCa, loginReserveCa, navigateToProperMonth, navigateToProperDay };
