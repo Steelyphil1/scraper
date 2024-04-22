@@ -3,7 +3,6 @@ const logging = require('../helpers/logging');
 const data = require('../helpers/data');
 const selenium = require('../helpers/selenium');
 const constants = require('../helpers/constants');
-const exec = require("child_process").exec;
 
 const NAMESPACE = 'campsite-handler';
 
@@ -52,9 +51,34 @@ const processScrape = async (event, count) => {
     utilities.endSelenium();
 
     // Rerun based on configuration
-    utilities.handleRecursion(event);
+    handleRecursion(event, count);
 
     logging.info(NAMESPACE, 'processScrape: END');
+}
+
+/**
+ * Function to recursively rerun the scraper based on the event config
+ * @param {Object} event Main lambda event object
+ * @param {number} count How many iterations have happened thus far
+ */
+const handleRecursion = async (event, count) => {
+    logging.info(NAMESPACE, 'handleRecursion: START');
+
+    if(data.environment === 'local' && data.camparea === 'yosemite'){
+        await new Promise(r => setTimeout(r, 40000));
+        if(count % 3 === 0){
+            processScrape({...event, campground: 'upper-pines'}, count+1);
+        } else if(count % 3 === 1){
+            processScrape({...event, campground: 'lower-pines'}, count+1);
+        } else {
+            processScrape({...event, campground: 'north-pines'}, count+1);
+        }
+    } else if(data.environment === 'local'){
+        await new Promise(r => setTimeout(r, 40));
+        processScrape(event, count+1);
+    } else {
+        logging.info("Non-local execution -- ending process");
+    }
 }
 
 module.exports = { processScrape }
