@@ -4,7 +4,6 @@ const selenium = require('./selenium');
 const logging = require('./logging');
 const constants = require('./constants');
 const data = require('./data');
-const campsiteHandler = require('../handlers/campsite-handler');
 const recreationServicer = require('../servicers/recreation-servicer');
 const reservecaServicer = require('../servicers/reserveca-servicer');
 const NAMESPACE = 'utilities';

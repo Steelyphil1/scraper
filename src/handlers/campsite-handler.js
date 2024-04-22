@@ -59,6 +59,7 @@ const processScrape = async (event, count) => {
 /**
  * Function to recursively rerun the scraper based on the event config
  * @param {Object} event Main lambda event object
+ * @param {number} count How many iterations have happened thus far
  */
 const handleRecursion = async (event, count) => {
     logging.info(NAMESPACE, 'handleRecursion: START');
