@@ -145,7 +145,7 @@ const findSiteReserveCa = async (day) => {
         if(d1 < d2){
             d1.setDate(d1.getDate() + 1);
             console.log('d1 is < d2 -- Recursively Calling findSiteReserveCa with: ' + d1.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
-            await findSiteReserveCa(driver, d1.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
+            await findSiteReserveCa(selenium.driver, d1.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
         } else {
             console.log('Base Case Reached. Ending findSiteRecreation');
         }
