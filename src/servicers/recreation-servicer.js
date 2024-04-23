@@ -129,13 +129,13 @@ const findSiteRecreation = async () => {
                             if(ariaLabel.includes(date)){
                                 siteElementToClick = siteElement;
                                 data.dateFoundMap[date] = true;
-                                data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(driver, siteNumber));
+                                data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(selenium.driver, siteNumber));
                             }
                         }
                     } else {
                         siteElementToClick = siteElement;
                         data.found = true;
-                        data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(driver, siteNumber));
+                        data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(selenium.driver, siteNumber));
                     }
                 }
             }
