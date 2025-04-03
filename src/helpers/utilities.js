@@ -104,6 +104,7 @@ const digestEvent = (event) => {
     data.environment = event.environment;
     data.login = event.login;
     data.headless = event.headless;
+    data.timeout = event.timeout;
     compileDates();
 }
 
@@ -171,19 +172,22 @@ const navigateToProperDate = async () => {
     logging.info(NAMESPACE, 'navigateToProperDate: START');
 
     if(data.website === 'recreation.gov'){
-        const monthReturn = await recreationServicer.navigateToProperMonth();
-        logging.info(NAMESPACE, "month returned with: ", monthReturn);
-        if(monthReturn === 0) {
-            return await recreationServicer.navigateToProperDay();
+        await recreationServicer.navigateToProperMonth();
+        if(data.currentMonths.length > 0) {
+            await recreationServicer.navigateToProperDay();
+            data.navigationComplete = true;
+            return;
         } else {
-            return monthReturn;
+            return;
         }
     } else if(data.website === 'reserveca'){
-        const monthReturn = await reservecaServicer.navigateToProperMonth();
-        if(monthReturn === 0){
-            return await reservecaServicer.navigateToProperDay(data.dayMin);
+        await reservecaServicer.navigateToProperMonth();
+        if(data.currentMonths.length > 0){
+            await reservecaServicer.navigateToProperDay(data.dayMin);
+            data.navigationComplete = true;
+            return;
         } else {
-            return monthReturn;
+            return;
         }
     }
 }
@@ -289,8 +293,9 @@ const clearData = () => {
     data.found = false;
     data.targetEmails = [];
     data.confirmedDates = [];
-    data.currentDates = {};
-    data.currentMonths = {};
+    data.currentDates = [];
+    data.currentMonths = [];
+    data.navigationComplete = false;
 }
 
 /**

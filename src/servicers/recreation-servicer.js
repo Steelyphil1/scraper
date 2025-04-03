@@ -12,9 +12,10 @@ const navigateToProperMonth = async () => {
     logging.info(NAMESPACE, 'navigateToProperMonth: START');
     const months = await getRecreationGovMonths();
     if(months){
-        if(constants.months[data.monthMin].name in months && constants.months[data.monthMax].name in months){
+        if((months.includes(constants.months[data.monthMin].name) || months.includes(constants.months[data.monthMin].nameRecShort)) && (months.includes(constants.months[data.monthMax].name) || months.includes(constants.months[data.monthMax].nameRecShort))){
             logging.info(NAMESPACE, 'Navigated to the correct Months');
-            return 0;
+            data.currentMonths = months;
+            return;
         } else {
             logging.info(NAMESPACE, "Not In the correct months, forwarding 5 days");
             await recGovFiveDays();
@@ -32,9 +33,10 @@ const navigateToProperMonth = async () => {
 const navigateToProperDay = async () => {
     logging.info(NAMESPACE, 'navigateToProperDay: START');
     let dates = await getRecreationGovDays();
-    if(data.dayMin in dates && data.dayMax in dates){
+    if(dates.includes(data.dayMin) && dates.includes(data.dayMax)){
         logging.info(NAMESPACE, 'Navigated to the correct Dates');
-        return 0;
+        data.currentDates = dates;
+        return;
     } else {
         logging.info(NAMESPACE, "Correct Dates not displayed, forwarding 5 days");
         await recGovFiveDays();
@@ -59,11 +61,11 @@ const getRecreationGovMonths = async () => {
     logging.info(NAMESPACE, 'getRecreationGovMonths: START');
     let monthElements = await selenium.driver.findElements(selenium.by.xpath('//tr[@class="rec-table-months-row"]//th//div//span'));
     if(monthElements !== undefined && monthElements.length > 0){
-        const months = {};
+        const months = [];
         for(let monthElement of monthElements){
             if(monthElement !== undefined){
-                let month = await monthElement.getText();
-                months[month] = month;
+                const month = await monthElement.getText();
+                months.push(month);
             }
         }
         return months;
@@ -80,11 +82,11 @@ const getRecreationGovDays = async () => {
     logging.info(NAMESPACE, 'getRecreationGovDays: START');
     let dateElements = await selenium.driver.findElements(selenium.by.xpath('//span[@class="date"]'));
     if(dateElements !== undefined){
-        const dates = {};
+        const dates = [];
         for(let dateElement of dateElements){
             if(dateElement !== undefined){
                 let date = await dateElement.getText();
-                dates[date] = date;
+                dates.push(date);
             }
         }
         return dates;
@@ -102,7 +104,10 @@ const findSiteRecreation = async () => {
     if(siteElements && siteElements.length > 0){
         let siteElementToClick;
         for(let siteElement of siteElements){
-            let ariaLabel = await siteElement.getAttribute('aria-label');
+            const ariaLabel = await getLabel(siteElement);
+            if (!ariaLabel) {
+                break; //If ones stale they all end up being stale for some reason.
+            }
             if(data.dates.some(date => ariaLabel.substring(0,12).includes(date))){
                 if(data.campsite){
                     if(ariaLabel.substring(18, ariaLabel.length-1).includes(data.campsite)){
@@ -123,19 +128,20 @@ const findSiteRecreation = async () => {
                     }
                 } else {
                     logging.info(NAMESPACE, 'Found Campsite -- ' + ariaLabel.substring(0, 23));
-                    const siteNumber = ariaLabel.match(/\b\d{3}\b/)[0];
+                    const siteNumberArray = ariaLabel.match(/\b\d{3}\b/);
+                    const siteNumber = siteNumberArray ? siteNumberArray[0] : "";
                     if(data.range){
                         for(let date of Object.keys(data.dateFoundMap)){
                             if(ariaLabel.includes(date)){
                                 siteElementToClick = siteElement;
                                 data.dateFoundMap[date] = true;
-                                data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(selenium.driver, siteNumber));
+                                data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(siteNumber));
                             }
                         }
                     } else {
                         siteElementToClick = siteElement;
                         data.found = true;
-                        data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(selenium.driver, siteNumber));
+                        data.confirmedDates.push(ariaLabel + "&" + await getSiteUrl(siteNumber));
                     }
                 }
             }
@@ -169,13 +175,21 @@ const findSiteRecreation = async () => {
     }
 }
 
+const getLabel = async (siteElement) => {
+    try{
+        return await siteElement.getAttribute('aria-label');
+    } catch(error) {
+        console.log("Error interacting with siteElement, aborting this run");
+    }
+}
+
 /**
  * Function to get the URL of an available campsite
  * @param {string} siteNumber Number of the site for which to get the URL to the reserve page
  * @returns 
  */
 const getSiteUrl = async (siteNumber) => {
-    logging.info(NAMESPACE, 'getSiteUrl: START');
+    logging.info(NAMESPACE, 'getSiteUrl: START', siteNumber);
 
     let siteLink = await selenium.driver.findElements(selenium.by.xpath(`//a[contains(.,'${siteNumber}')]`));
     if(siteLink !== undefined && siteLink.length > 0){

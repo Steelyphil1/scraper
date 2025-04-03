@@ -37,6 +37,18 @@ const campsites = {
             location: "big sur",
             campground: "pfeiffer-main",
             url: "https://www.reservecalifornia.com/Web/Default.aspx#!park/690/767"
+        },
+        "steep-ravine-cabins": {
+            website: "reserveca",
+            location: "steep ravine",
+            campground: "cabins",
+            url: "https://www.reservecalifornia.com/Web/Default.aspx#!park/682/766"
+        },
+        "samuel-p-taylor_creekside": {
+            website: "reserveca",
+            location: "samuel p",
+            campground: "creekside",
+            url: "https://www.reservecalifornia.com/Web/Default.aspx#!park/705/653"
         }
     }
 };
@@ -45,61 +57,73 @@ const months = {
     "Jan": {
         number: 01,
         name: "JANUARY",
+        nameRecShort: "JAN",
         nameReserve: "January"
     },
     "Feb": {
         number: 02,
         name: "FEBRUARY",
+        nameRecShort: "FEB",
         nameReserve: "February"
     },
     "Mar": {
         number: 03,
         name: "MARCH",
+        nameRecShort: "MAR",
         nameReserve: "March"
     },
     "Apr": {
         number: 04,
         name: "APRIL",
+        nameRecShort: "APR",
         nameReserve: "April"
     },
     "May": {
         number: 05,
         name: "MAY",
+        nameRecShort: "MAY",
         nameReserve: "May"
     },
     "Jun": {
         number: 06,
         name: "JUNE",
+        nameRecShort: "JUN",
         nameReserve: "June"
     },
     "Jul": {
         number: 07,
         name: "JULY",
+        nameRecShort: "JUL",
         nameReserve: "July"
     },
     "Aug": {
         number: 08,
         name: "AUGUST",
+        nameRecShort: "AUG",
         nameReserve: "August"
     },
     "Sep": {
         number: 09,
         name: "SEPTEMBER",
+        nameRecShort: "SEP",
         nameReserve: "September"
     },
     "Oct": {
         number: 10,
         name: "OCTOBER",
+        nameRecShort: "OCT",
         nameReserve: "October"
     },
     "Nov": {
         number: 11,
         name: "NOVEMBER",
+        nameRecShort: "NOV",
         nameReserve: "November"
     },
     "Dec": {
         number: 12,
         name: "DECEMBER",
+        nameRecShort: "DEC",
         nameReserve: "December"
     }
 };

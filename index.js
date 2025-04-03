@@ -22,47 +22,51 @@ const executeRequest = (event, context, callback) => {
 //     firstName: 'Phillip',
 //     lastName: 'Bay',
 //     website: 'reserveca',
-//     campground: 'pfeiffer-main',
+//     camparea: null,
+//     campground: 'samuel-p-taylor_creekside',
 //     campsite: null,
 //     type: 'scrape',
-//     yearMin: '2023',
-//     monthMin: 'Jun',
-//     dayMin: '12',
-//     yearMax: '2023',
-//     monthMax: 'Jun',
-//     dayMax: '15',
+//     yearMin: '2025',                                //String    2025
+//     monthMin: 'Apr',                                //String    May or Apr
+//     dayMin: '09',                                   //String    09 or 21
+//     yearMax: '2025',                                //String    2025
+//     monthMax: 'Apr',                                //String    May or Apr
+//     dayMax: '10',                                   //String    09 or 21
 //     range: false,
 //     sourceEmail: 'yosemitescraper420@gmail.com',
-//     targetEmails: ['phillip.bay@gmail.com']
+//     targetEmails: ['phillip.bay@gmail.com'],
+//     environment: "local",
+//     login: false,
+//     headless: false,
+//     timeout: 3 * 60 
 // });
 
 //Recreation.Gov
-this.handler({
-    firstName: "Phillip",                       //String    
-    lastName: "Bay",                            //String    
-    website: "recreation.gov",                  //String    "recreation.gov" or "reserveca"
-    camparea: "yosemite",                       //String    "yosemite" or null
-    campground: "upper-pines",                  //String    "upper-pines"
-    campsite: null,                             //Number    42
-    type: "scrape",                             //String    "scrape"
-    yearMin: "2024",                            //String    "2023"
-    monthMin: "May",                            //String    "Oct"
-    dayMin: "3",                                //String    "6" or "24"
-    yearMax: "2024",                            //String    "2023"
-    monthMax: "May",                            //String    "Oct"
-    dayMax: "4",                                //String    "7" or "14"
-    range: false,                               //Boolean   Enforce a specific range
-    sourceEmail: "yosemitescraper420@gmail.com",//String
-    targetEmails: ["phillip.bay@gmail.com"],    //Array of String Emails
-    environment: "local",                       //String 'local or lambda'
-    login: false,
-    headless: true,
-});
+// this.handler({
+//     firstName: "Phillip",                       //String    
+//     lastName: "Bay",                            //String    
+//     website: "recreation.gov",                  //String    "recreation.gov" or "reserveca"
+//     camparea: null,                             //String    "yosemite" or null
+//     campground: "wolf-creek",                  //String    "upper-pines"
+//     campsite: null,                             //Number    42
+//     type: "scrape",                             //String    "scrape"
+//     yearMin: "2025",                            //String    "2023"
+//     monthMin: "Jul",                            //String    "Oct"
+//     dayMin: "3",                               //String    "6" or "24"
+//     yearMax: "2025",                            //String    "2023"
+//     monthMax: "Jul",                            //String    "Oct"
+//     dayMax: "5",                               //String    "7" or "14"
+//     range: false,                               //Boolean   Enforce a specific range
+//     sourceEmail: "yosemitescraper420@gmail.com",//String
+//     targetEmails: ["phillip.bay@gmail.com"],   //Array of String Emails
+//     environment: "local",                       //String 'local or lambda'
+//     login: false,                               //Not working yet
+//     headless: true,
+//     timeout: 3 * 60                                 //int Sleep between cycles in seconds
+// });
 
 //ReserveCa Days: '01'-'31'
 //Recreation Days: '1'-'31'
 //Recreation campsite: 33
 //Months "Feb"
 //Year "2023"
-
-//TODO: Parameterize the timeout

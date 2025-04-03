@@ -30,13 +30,13 @@ const reserveCaNextWeek = async () => {
 const navigateToProperMonth = async () => {
     logging.info(NAMESPACE, 'navigateToProperMonth: START');
     await new Promise(r => setTimeout(r, 10000));
-    let months = await getReserveCaMonths();
-    if(constants.months[data.monthMin].nameReserve in months && constants.months[data.monthMax].nameReserve in months){
+    const months = await getReserveCaMonths();
+    if(months.includes(constants.months[data.monthMin].nameReserve) && months.includes(constants.months[data.monthMax].nameReserve)){
         logging.info(NAMESPACE, 'navigateToProperMonth: Navigated to the correct Months');
         data.currentMonths = months;
-        return 0;
+        return;
     } else {
-        logging.info(NAMESPACE, "navigateToProperMonth: Not In the correct months, forwarding 5 days");
+        logging.info(NAMESPACE, "navigateToProperMonth: Not In the correct months, forwarding 7 days");
         await reserveCaNextWeek();
         await navigateToProperMonth();
     }
@@ -48,21 +48,30 @@ const navigateToProperMonth = async () => {
 const navigateToProperDay = async (day) => {
     logging.info(NAMESPACE, 'navigateToProperDay: START: with ' + day);
     await new Promise(r => setTimeout(r, 10000));
-    let dates = await getReserveCaDays();
-    if(day in dates){
-        if(Object.keys(data.months).length > 1){
-            if(day < 5){
-                logging.info(NAMESPACE, "navigateToProperDay: Correct Dates not displayed, forwarding 5 days");
-                await reserveCaNextWeek();
-                await navigateToProperDay(day);
-            }
-        } else {
+    const dates = await getReserveCaDays();
+    if(dates.includes(day)){
+        // console.log("currentMonths: ", data.currentMonths);
+        // if(data.currentMonths.length > 1){ 
+        //     console.log('currentMonths greater than 1');
+        //     if(day < 5){
+        //         logging.info(NAMESPACE, "navigateToProperDay: Correct Dates not displayed, forwarding 7 days");
+        //         await reserveCaNextWeek();
+        //         await navigateToProperDay(day);
+        //     } else {
+        //         logging.info(NAMESPACE, 'navigateToProperDay: Navigated to the correct Dates');
+        //         data.currentDates = dates;
+        //         return;
+        //     }
+        // } else {
             logging.info(NAMESPACE, 'navigateToProperDay: Navigated to the correct Dates');
+            console.log("Dates: " , dates, data);
             data.currentDates = dates;
-            return 0;
-        }
+            console.log("currentDates", data.currentDates);
+            console.log("returning 0");
+            return;
+        //}
     } else {
-        logging.info(NAMESPACE, "navigateToProperDay: Correct Dates not displayed, forwarding 5 days");
+        logging.info(NAMESPACE, "navigateToProperDay: Correct Dates not displayed, forwarding 7 days");
         await reserveCaNextWeek();
         await navigateToProperDay(day);
     }
@@ -74,14 +83,12 @@ const navigateToProperDay = async (day) => {
  */
 const getReserveCaMonths = async () => {
     logging.info(NAMESPACE, 'getReserveCaMonths: START');
-    const months = {};
-    let monthElement = await selenium.driver.findElement(selenium.by.xpath('//div[@class="col-span-2 w-full text-fs-18 text-black font-bold flex items-center justify-center text-center"]'));
-    let month = await monthElement.getText();
+    let months = [];
+    const monthElement = await selenium.driver.findElement(selenium.by.xpath('//div[@class="col-span-2 w-full text-fs-18 text-black font-bold flex items-center justify-center text-center"]'));
+    const month = await monthElement.getText();
     if(month){
-        let tempArray = month.split(' - ');
-        for(let mon of tempArray){
-            months[mon] = mon;
-        }
+        const tempArray = month.split(' - ');
+        months = [...tempArray]
     }
     return months;
 }
@@ -94,12 +101,12 @@ const getReserveCaDays = async () => {
     logging.info(NAMESPACE, 'getReserveCaDays: START');
     let dateElements = await selenium.driver.findElements(selenium.by.xpath('//tr[@class="lg:flex lg:flex-row bg-white lg:z-2 lg:justify-center xs:justify-between lg:border-b lg:border-gray-01 lg:pb-2"]//td//div'));
     if(dateElements !== undefined){
-        const dates = {};
+        const dates = [];
         for(let dateElement of dateElements){
             if(dateElement !== undefined){
                 let date = await dateElement.getText();
                 if(date.match(/^[0-9]+$/) != null){
-                    dates[date] = date;
+                    dates.push(date);
                 }
             }
         }
@@ -115,7 +122,7 @@ const getReserveCaDays = async () => {
 const findSiteReserveCa = async (day) => {
     logging.info(NAMESPACE, 'findSiteReserveCa: START: ' , "//button[contains(@class, ' available-unit') and contains(@title, '" + day + "')]");
     logging.info(NAMESPACE, 'findSiteReserveCa: ', data.currentDates, day.substring(3,5));
-    if(day.substring(3,5) in data.currentDates){
+    if(data.currentDates.includes(day.substring(3,5))){
         logging.info(NAMESPACE, 'findSiteReserveCa: Day ' + day + ' is Among Dates: ' , data.currentDates);
     } else {
         await reserveCaNextWeek();
@@ -124,7 +131,7 @@ const findSiteReserveCa = async (day) => {
     let siteElements = await selenium.driver.findElements(selenium.by.xpath("//button[contains(@class, ' available-unit') and contains(@title, '" + day + "')]"));
     if(siteElements && siteElements.length > 0){
         for(let siteElement of siteElements){
-            let ariaLabel = await siteElement.getAttribute('aria-label'); //stopped here
+            let ariaLabel = await siteElement.getAttribute('aria-label');
             if(data.campsite && ariaLabel.includes(data.campsite)){
                 logging.info(NAMESPACE, 'Found Campsite -- ' + ariaLabel);
                 if(ariaLabel.includes(day)){
@@ -141,13 +148,12 @@ const findSiteReserveCa = async (day) => {
         }
         let d1 = new Date(day);
         let d2 = new Date(data.dateMax);
-        console.log('d1: ' , d1 , 'd2: ' , d2);
         if(d1 < d2){
             d1.setDate(d1.getDate() + 1);
-            console.log('d1 is < d2 -- Recursively Calling findSiteReserveCa with: ' + d1.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
-            await findSiteReserveCa(selenium.driver, d1.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
+            logger.info(NAMESPACE, 'd1 is < d2 -- Recursively Calling findSiteReserveCa with: ' + d1.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
+            await findSiteReserveCa(d1.toLocaleDateString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}));
         } else {
-            console.log('Base Case Reached. Ending findSiteRecreation');
+            logger.info(NAMESPACE, 'Base Case Reached. Ending findSiteRecreation');
         }
     } else {
         logging.info(NAMESPACE, 'findSiteReserveCa: No Available Sites Found');
