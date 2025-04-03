@@ -32,8 +32,8 @@ const processScrape = async (event, count) => {
     }
 
     //Regardless of Website, Navigate to the correct Dates
-    const navigateReturn = await utilities.navigateToProperDate();
-    if(navigateReturn === 0){
+    await utilities.navigateToProperDate();
+    if(data.navigationComplete){
         //Once we are at the correct Dates, determine if a campsite is available
         await utilities.findSite();
         if(data.found){
@@ -65,7 +65,7 @@ const handleRecursion = async (event, count) => {
     logging.info(NAMESPACE, 'handleRecursion: START');
 
     if(data.environment === 'local' && data.camparea === 'yosemite'){
-        await new Promise(r => setTimeout(r, 40000));
+        await new Promise(r => setTimeout(r, data.timeout * 1000));
         if(count % 3 === 0){
             processScrape({...event, campground: 'upper-pines'}, count+1);
         } else if(count % 3 === 1){
@@ -74,7 +74,7 @@ const handleRecursion = async (event, count) => {
             processScrape({...event, campground: 'north-pines'}, count+1);
         }
     } else if(data.environment === 'local'){
-        await new Promise(r => setTimeout(r, 40000));
+        await new Promise(r => setTimeout(r, data.timeout * 1000));
         processScrape(event, count+1);
     } else {
         logging.info("Non-local execution -- ending process");
